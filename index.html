@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>로또 번호 추첨기</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+    min-height: 100vh;
+  }
+  .wrap { width: 100%; max-width: 440px; }
+  h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .sub { color: #6e6e73; font-size: 15px; margin-bottom: 28px; }
+
+  button {
+    width: 100%;
+    padding: 15px;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    background: #0071e3;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  button:hover { background: #0077ed; }
+  button:active { transform: scale(.99); }
+
+  .balls { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; margin: 32px 0; min-height: 52px; }
+  .ball {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 700; font-size: 19px;
+    animation: pop .35s cubic-bezier(.2,.9,.3,1.4) backwards;
+  }
+  @keyframes pop { from { transform: scale(0); opacity: 0; } }
+  .plus { align-self: center; color: #86868b; font-size: 20px; font-weight: 600; }
+
+  .history { margin-top: 36px; }
+  .history h2 { font-size: 13px; color: #6e6e73; font-weight: 600; margin-bottom: 12px; letter-spacing: .04em; }
+  .row {
+    background: #fff;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    font-size: 15px;
+    display: flex; justify-content: space-between;
+  }
+  .row span:first-child { color: #86868b; font-variant-numeric: tabular-nums; }
+  .row span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>로또 번호 추첨기</h1>
+  <p class="sub">1부터 45까지 중 6개와 보너스 번호를 뽑습니다.</p>
+
+  <button id="draw">번호 뽑기</button>
+
+  <div class="balls" id="balls"></div>
+
+  <div class="history">
+    <h2>추첨 기록</h2>
+    <div id="history"></div>
+  </div>
+</div>
+
+<script>
+function colorOf(n) {
+  if (n <= 10) return '#fbc400';
+  if (n <= 20) return '#69c8f2';
+  if (n <= 30) return '#ff7272';
+  if (n <= 40) return '#aaa';
+  return '#b0d840';
+}
+
+function drawNumbers() {
+  const pool = Array.from({length: 45}, (_, i) => i + 1);
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  const main = pool.slice(0, 6).sort((a, b) => a - b);
+  return { main, bonus: pool[6] };
+}
+
+let count = 0;
+
+function render({ main, bonus }) {
+  const box = document.getElementById('balls');
+  box.innerHTML = '';
+  main.forEach((n, i) => {
+    const el = document.createElement('div');
+    el.className = 'ball';
+    el.style.background = colorOf(n);
+    el.style.animationDelay = (i * 0.08) + 's';
+    el.textContent = n;
+    box.appendChild(el);
+  });
+
+  const plus = document.createElement('div');
+  plus.className = 'plus';
+  plus.textContent = '+';
+  plus.style.animationDelay = '0.48s';
+  box.appendChild(plus);
+
+  const b = document.createElement('div');
+  b.className = 'ball';
+  b.style.background = colorOf(bonus);
+  b.style.animationDelay = '0.56s';
+  b.textContent = bonus;
+  box.appendChild(b);
+
+  count++;
+  const row = document.createElement('div');
+  row.className = 'row';
+  row.innerHTML = '<span>' + count + '회</span><span>' + main.join(', ') + ' + ' + bonus + '</span>';
+  document.getElementById('history').prepend(row);
+}
+
+document.getElementById('draw').addEventListener('click', () => render(drawNumbers()));
+</script>
+</body>
+</html>
