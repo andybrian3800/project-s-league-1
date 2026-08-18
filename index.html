@@ -4,6 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>로또 번호 추첨기</title>
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FSRPMJ7JSD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-FSRPMJ7JSD');
+</script>
+
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -136,7 +146,13 @@ function render({ main, bonus }) {
   document.getElementById('history').prepend(row);
 }
 
-document.getElementById('draw').addEventListener('click', () => render(drawNumbers()));
+document.getElementById('draw').addEventListener('click', () => {
+  render(drawNumbers());
+  // KPI 측정: '번호 뽑기'를 몇 번 눌렀는지 GA로 전송
+  if (typeof gtag === 'function') {
+    gtag('event', 'draw_click', { draw_count: count });
+  }
+});
 
 document.getElementById('clear').addEventListener('click', () => {
   document.getElementById('history').innerHTML = '';
