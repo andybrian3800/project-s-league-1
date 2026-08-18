@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>S리그 | 성균관대 교내 축구 리그</title>
-<meta name="description" content="성균관대 교내 축구 리그 S리그의 조별 순위, 경기 결과, 플레이오프 대진을 한 곳에서 확인하세요.">
+<meta name="description" content="성균관대 교내 축구 리그 S리그의 토너먼트 대진, 조별 순위, 라운드별 경기 결과를 한 곳에서 확인하세요.">
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FSRPMJ7JSD"></script>
@@ -16,158 +16,316 @@
 </script>
 
 <style>
+  :root {
+    --green: #0b6b3a;
+    --green-l: #128a4b;
+    --line: #e9e9ef;
+    --gray: #8b8b93;
+    --gray-d: #5c5c66;
+    --ink: #16161a;
+    --bg: #f4f5f7;
+  }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
-    background: #f2f2f5;
-    color: #16161a;
+    background: var(--bg); color: var(--ink);
     -webkit-text-size-adjust: 100%;
   }
-  .wrap { max-width: 480px; margin: 0 auto; padding: 0 14px 56px; }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 14px 60px; }
 
   /* ── 헤더 ── */
   header {
-    background: linear-gradient(160deg, #0b6b3a, #064a28);
-    color: #fff;
-    padding: 30px 20px 26px;
-    margin: 0 -14px 16px;
+    background: linear-gradient(135deg, #0b6b3a 0%, #064a28 100%);
+    color: #fff; padding: 26px 0 24px;
   }
-  header .kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; opacity: .75; }
-  header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; margin: 5px 0 4px; }
-  header p { font-size: 14px; opacity: .8; }
+  header .inner { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
+  header .kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; opacity: .7; }
+  header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; margin: 4px 0 3px; }
+  header p { font-size: 13.5px; opacity: .8; }
 
-  /* ── 우승 배너 ── */
-  .champ {
-    background: #fff; border-radius: 14px; padding: 18px 20px; margin-bottom: 22px;
-    display: flex; align-items: center; gap: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.07);
-    border-left: 4px solid #d4a017;
-  }
-  .champ .trophy { font-size: 30px; line-height: 1; }
-  .champ .label { font-size: 11px; font-weight: 700; color: #97803a; letter-spacing: .1em; }
-  .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
-  .champ .score { font-size: 13px; color: #6b6b73; margin-top: 3px; }
-
-  /* ── 섹션 ── */
-  section { margin-bottom: 30px; }
+  /* ── 공통 ── */
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
   h2 {
-    font-size: 12px; font-weight: 700; color: #6b6b73;
-    letter-spacing: .1em; margin-bottom: 10px; padding-left: 2px;
+    font-size: 13px; font-weight: 700; color: var(--gray-d);
+    letter-spacing: -0.01em; margin: 0 0 9px 2px;
+    display: flex; align-items: center; gap: 6px;
   }
+  h2::before { content: ''; width: 3px; height: 13px; background: var(--green); border-radius: 2px; }
+
+  /* ── 상단 2단 그리드 ── */
+  .top { display: grid; grid-template-columns: 1fr; gap: 22px; margin-top: 20px; }
+  @media (min-width: 880px) {
+    .top { grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr); gap: 24px; align-items: start; }
+  }
+  .col { display: flex; flex-direction: column; gap: 22px; min-width: 0; }
+
+  /* ── 우승 카드 ── */
+  .champ {
+    background: #fff; border: 1px solid var(--line); border-left: 4px solid #d8a72a;
+    border-radius: 12px; padding: 17px 19px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .champ .trophy { font-size: 29px; line-height: 1; }
+  .champ .label { font-size: 11px; font-weight: 700; color: #a8862c; letter-spacing: .09em; }
+  .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; margin-top: 1px; }
+  .champ .score { font-size: 12.5px; color: var(--gray); margin-top: 3px; }
 
   /* ── 탭 ── */
-  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
   .tab {
-    flex: 1; padding: 11px; border: none; border-radius: 10px;
-    font-family: inherit; font-size: 15px; font-weight: 700;
-    background: #e3e3e8; color: #6b6b73; cursor: pointer;
-    transition: background .15s, color .15s;
+    flex: 1; padding: 10px; border: 1px solid var(--line); border-radius: 9px;
+    font-family: inherit; font-size: 14.5px; font-weight: 700;
+    background: #fff; color: var(--gray); cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
   }
-  .tab.on { background: #0b6b3a; color: #fff; }
+  .tab.on { background: var(--green); color: #fff; border-color: var(--green); }
 
   /* ── 순위표 ── */
-  .card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
   table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
   th {
-    font-size: 11px; font-weight: 600; color: #8b8b93; text-align: center;
-    padding: 10px 2px; border-bottom: 1px solid #ececf0; background: #fafafc;
+    font-size: 11px; font-weight: 600; color: var(--gray); text-align: center;
+    padding: 9px 2px; border-bottom: 1px solid var(--line); background: #fbfbfd;
   }
-  td { font-size: 14px; text-align: center; padding: 11px 2px; border-bottom: 1px solid #f2f2f5; }
+  td { font-size: 14px; text-align: center; padding: 10px 2px; border-bottom: 1px solid #f4f4f8; }
   tr:last-child td { border-bottom: none; }
-  .c-rank { width: 30px; color: #8b8b93; font-size: 12px; font-weight: 600; }
-  .c-team { text-align: left !important; font-weight: 600; padding-left: 6px !important; letter-spacing: -0.02em; }
-  .c-wdl { color: #6b6b73; font-size: 13px; width: 62px; }
-  .c-gd { color: #6b6b73; width: 38px; font-size: 13px; }
-  .c-pts { font-weight: 800; width: 34px; }
-  tr.q td:first-child { box-shadow: inset 3px 0 0 #0b6b3a; }
-  tr.q .c-rank { color: #0b6b3a; }
-  .legend { font-size: 11px; color: #8b8b93; padding: 9px 12px; background: #fafafc; }
-  .legend b { color: #0b6b3a; }
+  .c-rank { width: 30px; color: var(--gray); font-size: 12px; font-weight: 700; }
+  .c-team { text-align: left !important; font-weight: 700; padding-left: 7px !important; letter-spacing: -0.03em; }
+  .c-wdl { color: var(--gray-d); font-size: 13px; width: 64px; }
+  .c-gd { color: var(--gray-d); width: 40px; font-size: 13px; }
+  .c-pts { font-weight: 800; width: 36px; }
+  tr.q td:first-child { box-shadow: inset 3px 0 0 var(--green); }
+  tr.q .c-rank { color: var(--green); }
+  .legend { font-size: 11px; color: var(--gray); padding: 9px 12px; background: #fbfbfd; border-top: 1px solid var(--line); }
+  .legend b { color: var(--green); }
 
-  /* ── 경기 결과 ── */
+  /* ── 토너먼트 브래킷 ── */
+  .bracket { padding: 16px 14px 14px; }
+  .br-label {
+    font-size: 11px; font-weight: 700; color: var(--gray);
+    letter-spacing: .07em; text-align: center; margin-bottom: 7px;
+  }
+  .br-row.one .cards { display: grid; grid-template-columns: minmax(0, 240px); justify-content: center; }
+  .br-row.two .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .g {
+    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    background: #fff; min-width: 0;
+  }
+  .g.final { border: 1.5px solid #dfc069; box-shadow: 0 2px 8px rgba(216,167,42,.14); }
+  .g-hd {
+    font-size: 10.5px; font-weight: 700; color: var(--gray); letter-spacing: .06em;
+    padding: 6px 10px; background: #fafafc; border-bottom: 1px solid var(--line);
+  }
+  .g.final .g-hd { background: #fdf8ec; color: #a8862c; }
+  .g-t {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 11px; font-size: 14px; letter-spacing: -0.03em;
+    color: var(--gray); min-width: 0;
+  }
+  .g-t + .g-t { border-top: 1px solid #f4f4f8; }
+  .g-t span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .g-t b { font-variant-numeric: tabular-nums; font-weight: 700; padding-left: 8px; }
+  .g-t.win { color: var(--ink); font-weight: 700; }
+  .g-t.win b { color: var(--green); font-weight: 800; }
+  .g-note {
+    font-size: 11px; color: var(--gray); padding: 6px 11px;
+    background: #fafafc; border-top: 1px solid var(--line);
+  }
+
+  /* 연결선 */
+  .conn { position: relative; height: 22px; }
+  .conn i { position: absolute; background: #d9d9e2; }
+  .conn .stem { left: 50%; top: 0; width: 2px; height: 11px; margin-left: -1px; }
+  .conn .bar  { left: 25%; right: 25%; top: 10px; height: 2px; }
+  .conn .dl, .conn .dr { top: 10px; width: 2px; height: 12px; }
+  .conn .dl { left: 25%; } .conn .dr { left: 75%; }
+  .conn.straight .dl, .conn.straight .dr { top: 0; height: 22px; }
+
+  .bye {
+    font-size: 11.5px; color: var(--gray); text-align: center;
+    margin-top: 12px; padding-top: 11px; border-top: 1px dashed var(--line); line-height: 1.6;
+  }
+  .third {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 10px; padding: 9px 11px; background: #fafafc;
+    border: 1px solid var(--line); border-radius: 9px;
+    font-size: 13px; color: var(--gray-d); letter-spacing: -0.02em;
+  }
+  .third .tag { font-size: 10.5px; font-weight: 700; color: var(--gray); letter-spacing: .06em; }
+  .third b { color: var(--ink); font-weight: 700; }
+
+  /* ── 라운드별 경기 ── */
+  .round + .round { margin-top: 12px; }
+  .r-hd {
+    display: flex; align-items: center; gap: 9px;
+    padding: 11px 14px; background: #fbfbfd; border-bottom: 1px solid var(--line);
+  }
+  .r-hd .n {
+    background: var(--green); color: #fff; font-size: 11.5px; font-weight: 800;
+    padding: 3px 9px; border-radius: 20px; letter-spacing: .02em;
+  }
+  .r-hd .t { font-size: 12.5px; color: var(--gray); }
+  .r-body { display: grid; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .r-body { grid-template-columns: 1fr 1fr; } .r-body .grp + .grp { border-left: 1px solid var(--line); } }
+  .grp + .grp { border-top: 1px solid var(--line); }
+  @media (min-width: 720px) { .grp + .grp { border-top: none; } }
+  .grp-hd {
+    font-size: 11px; font-weight: 700; color: var(--gray); letter-spacing: .06em;
+    padding: 9px 14px 4px;
+  }
   .match {
-    display: flex; align-items: center; padding: 10px 12px;
-    border-bottom: 1px solid #f2f2f5; font-size: 14px;
+    display: flex; align-items: center; padding: 9px 12px; font-size: 14px; letter-spacing: -0.03em;
   }
-  .match:last-child { border-bottom: none; }
-  .match .home { flex: 1; text-align: right; letter-spacing: -0.02em; }
-  .match .away { flex: 1; text-align: left; letter-spacing: -0.02em; }
+  .match + .match { border-top: 1px solid #f6f6fa; }
+  .match .home { flex: 1; text-align: right; color: var(--gray); min-width: 0; }
+  .match .away { flex: 1; text-align: left; color: var(--gray); min-width: 0; }
+  .match .w { color: var(--ink); font-weight: 700; }
   .match .sc {
-    font-weight: 800; font-variant-numeric: tabular-nums;
-    padding: 3px 9px; margin: 0 9px; border-radius: 7px;
-    background: #f2f2f5; font-size: 14px; white-space: nowrap;
+    font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13.5px;
+    padding: 3px 10px; margin: 0 10px; border-radius: 6px;
+    background: #f2f3f6; color: var(--ink); white-space: nowrap;
   }
-  .match .w { font-weight: 700; }
-  .match .l { color: #9b9ba3; }
 
-  /* ── 플레이오프 ── */
-  .po { padding: 4px 0; }
-  .po-round {
-    font-size: 11px; font-weight: 700; color: #8b8b93; letter-spacing: .08em;
-    padding: 12px 12px 5px;
+  /* ── 내 팀 선택 바 ── */
+  .mybar {
+    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 0 11px; margin-top: 18px;
   }
-  .po .note { font-size: 12px; color: #8b8b93; padding: 0 12px 11px; }
+  .mybar .cap {
+    font-size: 11.5px; font-weight: 700; color: var(--gray-d);
+    padding: 0 14px 9px; display: flex; align-items: center; gap: 8px;
+  }
+  .mybar .cap .hint { font-weight: 500; color: var(--gray); font-size: 11px; }
+  .chips {
+    display: flex; gap: 8px; overflow-x: auto; padding: 2px 14px 4px;
+    scrollbar-width: thin; -webkit-overflow-scrolling: touch;
+  }
+  .chip {
+    flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 5px;
+    background: none; border: none; padding: 3px 2px; cursor: pointer; font-family: inherit;
+    width: 58px;
+  }
+  .chip .logo {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.04em;
+    border: 2px solid transparent; transition: border-color .15s, transform .12s;
+    object-fit: cover; background-size: cover; background-position: center;
+  }
+  .chip .nm { font-size: 11px; color: var(--gray); letter-spacing: -0.04em; white-space: nowrap; font-weight: 600; }
+  .chip.on .logo { border-color: #ffd400; transform: scale(1.06); box-shadow: 0 0 0 3px rgba(255,212,0,.28); }
+  .chip.on .nm { color: var(--ink); font-weight: 800; }
+
+  .myctl {
+    display: none; align-items: center; justify-content: space-between; gap: 10px;
+    margin: 11px 14px 0; padding: 10px 12px;
+    background: #fffdf0; border: 1px solid #f2e08a; border-radius: 9px;
+  }
+  .myctl.show { display: flex; }
+  .myctl .txt { font-size: 12.5px; color: #6b5d1e; letter-spacing: -0.02em; }
+  .myctl .txt b { color: #16161a; }
+  .myctl .btns { display: flex; gap: 6px; flex: 0 0 auto; }
+  .myctl button {
+    font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
+    padding: 7px 11px; border-radius: 7px; border: 1px solid #e3d47a;
+    background: #fff; color: #6b5d1e; white-space: nowrap;
+  }
+  .myctl button.on { background: #ffd400; border-color: #ffd400; color: #33300f; }
+  .myctl button.ghost { border-color: var(--line); color: var(--gray); }
+
+  /* ── 형광 하이라이트 ── */
+  tr.mine td { background: #fff9d6; }
+  tr.mine .c-team { color: #16161a; }
+  tr.mine .c-team::after {
+    content: 'MY'; font-size: 9px; font-weight: 800; color: #8a7400;
+    background: #ffd400; padding: 1px 4px; border-radius: 3px; margin-left: 6px; vertical-align: 1px;
+  }
+  .match.mine { background: #fff9d6; }
+  .match.mine .home, .match.mine .away { color: var(--gray-d); }
+  .match.mine .w { color: #16161a; }
+  .match.mine .sc { background: #ffd400; color: #33300f; }
+  .g-t.mine { background: #fff9d6; }
+  .g-t.mine span { color: #16161a; font-weight: 800; }
+  .grp.empty .grp-hd { opacity: .45; }
+  .nomatch { font-size: 12.5px; color: var(--gray); padding: 6px 14px 12px; }
 
   /* ── 다음 시즌 ── */
   .next {
-    background: #fff; border-radius: 14px; padding: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.07); border: 1px dashed #c8c8d0;
-    text-align: center;
+    background: #fff; border: 1px dashed #ccccd6; border-radius: 12px;
+    padding: 20px; text-align: center; margin-top: 22px;
   }
-  .next .dot {
-    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
-    background: #0b6b3a; margin-right: 6px; vertical-align: middle;
-  }
-  .next h3 { font-size: 16px; font-weight: 700; margin-bottom: 7px; letter-spacing: -0.02em; }
-  .next p { font-size: 13.5px; color: #6b6b73; line-height: 1.65; }
+  .next .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; vertical-align: middle; }
+  .next h3 { font-size: 16px; font-weight: 700; margin-bottom: 7px; letter-spacing: -0.03em; }
+  .next p { font-size: 13.5px; color: var(--gray-d); line-height: 1.7; }
 
-  footer { text-align: center; font-size: 11.5px; color: #a0a0a8; margin-top: 26px; line-height: 1.7; }
+  footer { text-align: center; font-size: 11.5px; color: #a3a3ac; margin-top: 26px; line-height: 1.75; }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="kicker">SKKU S-LEAGUE</div>
-  <h1>S리그</h1>
-  <p>2026학년도 1학기 · 12개 팀 · 최종 결과</p>
+  <div class="inner">
+    <div class="kicker">SKKU S-LEAGUE</div>
+    <h1>S리그</h1>
+    <p>2026학년도 1학기 · 12개 팀 · 최종 결과</p>
+  </div>
 </header>
 
 <div class="wrap">
 
-  <div class="champ">
-    <div class="trophy">🏆</div>
-    <div>
-      <div class="label">우승</div>
-      <div class="name">에스카라</div>
-      <div class="score">결승 5 : 0 르풋A</div>
+  <div class="mybar">
+    <div class="cap">우리 팀 결과 보기 <span class="hint">팀을 누르면 해당 팀 경기가 형광으로 표시됩니다</span></div>
+    <div class="chips" id="chips"></div>
+    <div class="myctl" id="myctl">
+      <div class="txt"><b id="myname"></b> 선택됨</div>
+      <div class="btns">
+        <button id="only">우리 팀 경기만</button>
+        <button id="reset" class="ghost">해제</button>
+      </div>
     </div>
   </div>
 
-  <section id="sec-table">
-    <h2>조별 리그 순위</h2>
-    <div class="tabs">
-      <button class="tab on" data-g="A">A조</button>
-      <button class="tab" data-g="B">B조</button>
-    </div>
-    <div class="card">
-      <table>
-        <thead>
-          <tr><th></th><th style="text-align:left;padding-left:6px">팀</th><th>승·무·패</th><th>득실</th><th>승점</th></tr>
-        </thead>
-        <tbody id="standings"></tbody>
-      </table>
-      <div class="legend"><b>■</b> 상위 3팀 플레이오프 진출 · 팀당 5경기</div>
-    </div>
-  </section>
+  <div class="top">
+    <!-- 왼쪽: 우승 + 순위 -->
+    <div class="col">
+      <div class="champ">
+        <div class="trophy">🏆</div>
+        <div>
+          <div class="label">우승</div>
+          <div class="name">에스카라</div>
+          <div class="score">결승 5 : 0 르풋A</div>
+        </div>
+      </div>
 
-  <section id="sec-matches">
-    <h2>경기 결과 <span id="mg" style="color:#0b6b3a">A조</span></h2>
-    <div class="card" id="matches"></div>
-  </section>
+      <section id="sec-table">
+        <h2>조별 리그 순위</h2>
+        <div class="tabs">
+          <button class="tab on" data-g="A">A조</button>
+          <button class="tab" data-g="B">B조</button>
+        </div>
+        <div class="card">
+          <table>
+            <thead>
+              <tr><th></th><th style="text-align:left;padding-left:7px">팀</th><th>승·무·패</th><th>득실</th><th>승점</th></tr>
+            </thead>
+            <tbody id="standings"></tbody>
+          </table>
+          <div class="legend"><b>■</b> 상위 3팀 플레이오프 진출 · 팀당 5경기</div>
+        </div>
+      </section>
+    </div>
 
-  <section id="sec-playoff">
-    <h2>플레이오프</h2>
-    <div class="card po" id="playoff"></div>
+    <!-- 오른쪽: 토너먼트 -->
+    <section id="sec-playoff">
+      <h2>플레이오프 대진</h2>
+      <div class="card bracket" id="bracket"></div>
+    </section>
+  </div>
+
+  <!-- 아래: 리그전 -->
+  <section id="sec-league" style="margin-top:26px">
+    <h2>조별 리그전 · 라운드별 결과</h2>
+    <div id="rounds"></div>
   </section>
 
   <section id="sec-next">
@@ -184,67 +342,86 @@
 </div>
 
 <script>
-/* ─────────── 데이터 (2026학년도 1학기) ─────────── */
-const DATA = {
-  A: {
-    standings: [
-      { team: '플러렌',   w:4, d:1, l:0, gf:14, ga:4,  pts:13 },
-      { team: '헤르메스', w:3, d:1, l:1, gf:15, ga:8,  pts:10 },
-      { team: '파볼',     w:3, d:0, l:2, gf:13, ga:12, pts:9  },
-      { team: '팜',       w:2, d:1, l:2, gf:10, ga:7,  pts:7  },
-      { team: '르풋B',    w:1, d:1, l:3, gf:11, ga:10, pts:4  },
-      { team: '반달',     w:0, d:0, l:5, gf:1,  ga:23, pts:0  }
-    ],
-    matches: [
-      ['플러렌',6,0,'파볼'], ['플러렌',3,2,'르풋B'], ['플러렌',1,1,'헤르메스'],
-      ['플러렌',2,0,'반달'], ['플러렌',2,1,'팜'],
-      ['헤르메스',4,2,'르풋B'], ['헤르메스',7,1,'반달'], ['헤르메스',2,1,'팜'],
-      ['파볼',2,1,'르풋B'], ['파볼',3,1,'헤르메스'], ['파볼',6,0,'반달'],
-      ['팜',4,2,'파볼'], ['팜',3,0,'반달'], ['르풋B',1,1,'팜'], ['르풋B',5,0,'반달']
-    ]
-  },
-  B: {
-    standings: [
-      { team: '에스카라', w:4, d:1, l:0, gf:17, ga:3,  pts:13 },
-      { team: '르풋A',    w:4, d:1, l:0, gf:16, ga:4,  pts:13 },
-      { team: '발길질',   w:2, d:0, l:3, gf:16, ga:14, pts:6  },
-      { team: '메스',     w:2, d:0, l:3, gf:8,  ga:13, pts:6  },
-      { team: '퍼크',     w:1, d:0, l:4, gf:6,  ga:17, pts:3  },
-      { team: 'NFT',      w:1, d:0, l:4, gf:5,  ga:17, pts:3  }
-    ],
-    matches: [
-      ['에스카라',2,2,'르풋A'], ['에스카라',3,1,'메스'], ['에스카라',6,0,'퍼크'],
-      ['에스카라',3,0,'발길질'], ['에스카라',3,0,'NFT'],
-      ['르풋A',2,0,'메스'], ['르풋A',3,0,'퍼크'], ['르풋A',4,2,'발길질'], ['르풋A',5,0,'NFT'],
-      ['발길질',6,1,'퍼크'], ['발길질',6,3,'NFT'],
-      ['메스',3,2,'발길질'], ['메스',3,1,'NFT'],
-      ['퍼크',5,1,'메스'], ['NFT',1,0,'퍼크']
-    ]
-  }
+/* ═══════════ 데이터 (2026학년도 1학기) ═══════════ */
+
+const STANDINGS = {
+  A: [
+    { team:'플러렌',   w:4, d:1, l:0, gf:14, ga:4,  pts:13 },
+    { team:'헤르메스', w:3, d:1, l:1, gf:15, ga:8,  pts:10 },
+    { team:'파볼',     w:3, d:0, l:2, gf:13, ga:12, pts:9  },
+    { team:'팜',       w:2, d:1, l:2, gf:10, ga:7,  pts:7  },
+    { team:'르풋B',    w:1, d:1, l:3, gf:11, ga:10, pts:4  },
+    { team:'반달',     w:0, d:0, l:5, gf:1,  ga:23, pts:0  }
+  ],
+  B: [
+    { team:'에스카라', w:4, d:1, l:0, gf:17, ga:3,  pts:13 },
+    { team:'르풋A',    w:4, d:1, l:0, gf:16, ga:4,  pts:13 },
+    { team:'발길질',   w:2, d:0, l:3, gf:16, ga:14, pts:6  },
+    { team:'메스',     w:2, d:0, l:3, gf:8,  ga:13, pts:6  },
+    { team:'퍼크',     w:1, d:0, l:4, gf:6,  ga:17, pts:3  },
+    { team:'NFT',      w:1, d:0, l:4, gf:5,  ga:17, pts:3  }
+  ]
 };
 
-const PLAYOFF = [
-  { round: '6강', games: [
-      ['르풋A',1,0,'파볼',''],
-      ['헤르메스',1,0,'발길질','']
-  ], note: '조 1위 플러렌·에스카라는 4강 직행' },
-  { round: '4강', games: [
-      ['르풋A',2,0,'플러렌',''],
-      ['에스카라',1,1,'헤르메스','승부차기 4:1 에스카라 승']
-  ]},
-  { round: '3·4위전', games: [
-      ['플러렌',2,1,'헤르메스','']
-  ]},
-  { round: '결승', games: [
-      ['에스카라',5,0,'르풋A','']
-  ]}
+/* 라운드로빈으로 분할한 5개 라운드 (각 라운드에 6팀 전원 1경기씩) */
+const ROUNDS = [
+  { A: [['플러렌',2,0,'반달'],   ['헤르메스',4,2,'르풋B'], ['팜',4,2,'파볼']],
+    B: [['에스카라',3,0,'NFT'],  ['르풋A',3,0,'퍼크'],     ['메스',3,2,'발길질']] },
+  { A: [['플러렌',3,2,'르풋B'],  ['팜',3,0,'반달'],        ['파볼',3,1,'헤르메스']],
+    B: [['에스카라',6,0,'퍼크'], ['메스',3,1,'NFT'],       ['르풋A',4,2,'발길질']] },
+  { A: [['플러렌',2,1,'팜'],     ['파볼',2,1,'르풋B'],     ['헤르메스',7,1,'반달']],
+    B: [['에스카라',3,1,'메스'], ['발길질',6,1,'퍼크'],    ['르풋A',5,0,'NFT']] },
+  { A: [['플러렌',6,0,'파볼'],   ['헤르메스',2,1,'팜'],    ['르풋B',5,0,'반달']],
+    B: [['에스카라',3,0,'발길질'],['르풋A',2,0,'메스'],    ['NFT',1,0,'퍼크']] },
+  { A: [['플러렌',1,1,'헤르메스'],['파볼',6,0,'반달'],     ['르풋B',1,1,'팜']],
+    B: [['에스카라',2,2,'르풋A'], ['발길질',6,3,'NFT'],    ['퍼크',5,1,'메스']] }
 ];
 
-/* ─────────── 렌더링 ─────────── */
+/* 브래킷: 결승 → 4강 → 6강 (위에서 아래로) */
+const BRACKET = {
+  final: { hd:'결승', a:'에스카라', as:5, b:'르풋A', bs:0 },
+  semi: [
+    { hd:'4강 ①', a:'에스카라', as:1, b:'헤르메스', bs:1, win:'에스카라', note:'승부차기 4 : 1 에스카라 승' },
+    { hd:'4강 ②', a:'르풋A',   as:2, b:'플러렌',   bs:0 }
+  ],
+  quarter: [
+    { hd:'6강 ②', a:'헤르메스', as:1, b:'발길질', bs:0 },
+    { hd:'6강 ①', a:'르풋A',   as:1, b:'파볼',   bs:0 }
+  ],
+  third: { a:'플러렌', as:2, b:'헤르메스', bs:1 }
+};
+
+/* ═══════════ 팀 목록 · 로고 ═══════════ */
+/* 로고 파일이 준비되면 아래에 경로만 채우면 됩니다. 예: '메스': 'logos/mes.png' */
+const LOGOS = {
+  '플러렌':'', '헤르메스':'', '파볼':'', '팜':'', '르풋B':'', '반달':'',
+  '에스카라':'', '르풋A':'', '발길질':'', '메스':'', '퍼크':'', 'NFT':''
+};
+const TEAMS = [
+  { n:'메스', g:'B' },      // 기계공학부 MES — 맨 앞 고정
+  { n:'플러렌', g:'A' }, { n:'헤르메스', g:'A' }, { n:'파볼', g:'A' },
+  { n:'팜', g:'A' }, { n:'르풋B', g:'A' }, { n:'반달', g:'A' },
+  { n:'에스카라', g:'B' }, { n:'르풋A', g:'B' }, { n:'발길질', g:'B' },
+  { n:'퍼크', g:'B' }, { n:'NFT', g:'B' }
+];
+/* 로고가 없을 때 쓸 임시 색상 (팀명 해시) */
+function fallbackColor(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
+  return 'hsl(' + h + ', 42%, 46%)';
+}
+
+let MY = localStorage.getItem('sleague_my') || '';   // 선택한 우리 팀
+let ONLY = false;                                     // 우리 팀 경기만 보기
+let CUR = 'A';                                        // 현재 보고 있는 조
+
+/* ═══════════ 렌더링 ═══════════ */
+
 function renderStandings(g) {
-  document.getElementById('standings').innerHTML = DATA[g].standings.map((t, i) => {
+  CUR = g;
+  document.getElementById('standings').innerHTML = STANDINGS[g].map((t, i) => {
     const gd = t.gf - t.ga;
-    return '<tr class="' + (i < 3 ? 'q' : '') + '">' +
+    return '<tr class="' + (i < 3 ? 'q ' : '') + (t.team === MY ? 'mine' : '') + '">' +
       '<td class="c-rank">' + (i + 1) + '</td>' +
       '<td class="c-team">' + t.team + '</td>' +
       '<td class="c-wdl">' + t.w + '·' + t.d + '·' + t.l + '</td>' +
@@ -253,76 +430,169 @@ function renderStandings(g) {
   }).join('');
 }
 
-function matchRow([h, hs, as, a, note]) {
-  const hc = hs > as ? 'w' : hs < as ? 'l' : '';
-  const ac = as > hs ? 'w' : as < hs ? 'l' : '';
-  return '<div class="match">' +
-    '<span class="home ' + hc + '">' + h + '</span>' +
-    '<span class="sc">' + hs + ' : ' + as + '</span>' +
-    '<span class="away ' + ac + '">' + a + '</span></div>' +
-    (note ? '<div class="note" style="text-align:center;padding:0 12px 9px">' + note + '</div>' : '');
+function gameCard(m, extra) {
+  const win = m.win || (m.as > m.bs ? m.a : m.bs > m.as ? m.b : null);
+  const row = (name, score) =>
+    '<div class="g-t' + (name === win ? ' win' : '') + (name === MY ? ' mine' : '') +
+    '"><span>' + name + '</span><b>' + score + '</b></div>';
+  return '<div class="g' + (extra || '') + '">' +
+    '<div class="g-hd">' + m.hd + '</div>' +
+    row(m.a, m.as) + row(m.b, m.bs) +
+    (m.note ? '<div class="g-note">' + m.note + '</div>' : '') +
+    '</div>';
 }
 
-function renderMatches(g) {
-  document.getElementById('matches').innerHTML = DATA[g].matches.map(matchRow).join('');
-  document.getElementById('mg').textContent = g + '조';
+function renderBracket() {
+  const B = BRACKET;
+  const conn = '<div class="conn"><i class="stem"></i><i class="bar"></i><i class="dl"></i><i class="dr"></i></div>';
+  const connS = '<div class="conn straight"><i class="dl"></i><i class="dr"></i></div>';
+
+  document.getElementById('bracket').innerHTML =
+    '<div class="br-row one"><div class="br-label">결승</div><div class="cards">' +
+      gameCard(Object.assign({ hd: '🏆 결승' }, B.final), ' final') +
+    '</div></div>' +
+    conn +
+    '<div class="br-row two"><div class="br-label">4강</div><div class="cards">' +
+      B.semi.map(m => gameCard(m)).join('') +
+    '</div></div>' +
+    connS +
+    '<div class="br-row two"><div class="br-label">6강</div><div class="cards">' +
+      B.quarter.map(m => gameCard(m)).join('') +
+    '</div></div>' +
+    '<div class="bye">조 1위 <b>에스카라</b>(B조) · <b>플러렌</b>(A조)은 6강 없이 4강 직행</div>' +
+    '<div class="third"><span class="tag">3·4위전</span>' +
+      '<span><b>' + B.third.a + '</b> ' + B.third.as + ' : ' + B.third.bs + ' ' + B.third.b + '</span></div>';
 }
 
-function renderPlayoff() {
-  document.getElementById('playoff').innerHTML = PLAYOFF.map(r =>
-    '<div class="po-round">' + r.round + '</div>' +
-    r.games.map(matchRow).join('') +
-    (r.note ? '<div class="note">' + r.note + '</div>' : '')
-  ).join('');
+function matchRow([h, hs, as_, a]) {
+  const hc = hs > as_ ? ' w' : '';
+  const ac = as_ > hs ? ' w' : '';
+  const mine = (MY && (h === MY || a === MY)) ? ' mine' : '';
+  return '<div class="match' + mine + '">' +
+    '<span class="home' + hc + '">' + h + '</span>' +
+    '<span class="sc">' + hs + ' : ' + as_ + '</span>' +
+    '<span class="away' + ac + '">' + a + '</span></div>';
 }
 
-renderStandings('A');
-renderMatches('A');
-renderPlayoff();
+function renderRounds() {
+  const myG = (TEAMS.find(t => t.n === MY) || {}).g;
+  const show = (ONLY && MY) ? [myG] : ['A', 'B'];    // 필터 켜면 우리 조만
+  document.getElementById('rounds').innerHTML = ROUNDS.map((r, i) => {
+    const groups = show.map(g => {
+      let ms = r[g];
+      if (ONLY && MY) ms = ms.filter(m => m[0] === MY || m[3] === MY);
+      const body = ms.length
+        ? ms.map(matchRow).join('')
+        : '<div class="nomatch">이 라운드에 우리 팀 경기 없음</div>';
+      return '<div class="grp' + (ms.length ? '' : ' empty') + '"><div class="grp-hd">' + g + '조</div>' +
+             body + '</div>';
+    }).join('');
+    const cnt = (ONLY && MY) ? 1 : 6;
+    return '<div class="round card">' +
+      '<div class="r-hd"><span class="n">' + (i + 1) + 'R</span>' +
+      '<span class="t">' + cnt + '경기</span></div>' +
+      '<div class="r-body">' + groups + '</div></div>';
+  }).join('');
+}
 
-/* ─────────── 탭 ─────────── */
+/* ═══════════ 우리 팀 ═══════════ */
+
+function renderChips() {
+  document.getElementById('chips').innerHTML = TEAMS.map(t => {
+    const src = LOGOS[t.n];
+    const logo = src
+      ? '<div class="logo" style="background-image:url(' + src + ')"></div>'
+      : '<div class="logo" style="background:' + fallbackColor(t.n) + '">' + t.n.slice(0, 2) + '</div>';
+    return '<button class="chip' + (t.n === MY ? ' on' : '') + '" data-t="' + t.n + '" data-g="' + t.g + '">' +
+           logo + '<span class="nm">' + t.n + '</span></button>';
+  }).join('');
+
+  document.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => selectTeam(c.dataset.t, c.dataset.g));
+  });
+}
+
+function refresh() {
+  renderStandings(CUR);
+  renderBracket();
+  renderRounds();
+  document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.t === MY));
+  document.getElementById('myctl').classList.toggle('show', !!MY);
+  document.getElementById('myname').textContent = MY;
+  document.getElementById('only').classList.toggle('on', ONLY);
+}
+
+function selectTeam(name, g) {
+  if (MY === name) { clearTeam(); return; }       // 같은 팀 다시 누르면 해제
+  MY = name;
+  localStorage.setItem('sleague_my', MY);
+  // 우리 팀이 속한 조로 순위표 자동 전환
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.g === g));
+  CUR = g;
+  refresh();
+  gtag('event', 'team_select', { team: name });    // KPI: 어느 팀 사람들이 쓰는가
+}
+
+function clearTeam() {
+  MY = ''; ONLY = false;
+  localStorage.removeItem('sleague_my');
+  refresh();
+}
+
+document.getElementById('only').addEventListener('click', () => {
+  ONLY = !ONLY;
+  refresh();
+  gtag('event', 'my_matches_only', { team: MY, state: ONLY ? 'on' : 'off' });
+});
+document.getElementById('reset').addEventListener('click', clearTeam);
+
+/* ═══════════ 초기화 ═══════════ */
+renderChips();
+// 지난 방문에서 고른 팀이 있으면 그 조부터 보여준다 (재방문 경험)
+const saved = TEAMS.find(t => t.n === MY);
+if (saved) {
+  CUR = saved.g;
+  document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b.dataset.g === saved.g));
+}
+refresh();
+
+/* ═══════════ 탭 ═══════════ */
 document.querySelectorAll('.tab').forEach(btn => {
   btn.addEventListener('click', () => {
     const g = btn.dataset.g;
     document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b === btn));
     renderStandings(g);
-    renderMatches(g);
-    // KPI: 어느 조를 보는지 = 어느 팀 사람들이 들어오는지
-    gtag('event', 'group_tab', { group: g });
+    gtag('event', 'group_tab', { group: g });   // KPI: 어느 조 사람들이 들어오는가
   });
 });
 
-/* ─────────── KPI 측정: 스크롤 깊이 ─────────── */
+/* ═══════════ KPI: 스크롤 깊이 ═══════════ */
 (function () {
-  const marks = [25, 50, 75, 100];
-  const fired = new Set();
+  const marks = [25, 50, 75, 100], fired = new Set();
   function check() {
     const h = document.documentElement;
     const max = h.scrollHeight - h.clientHeight;
     const pct = max <= 0 ? 100 : Math.round((h.scrollTop / max) * 100);
     marks.forEach(m => {
-      if (pct >= m && !fired.has(m)) {
-        fired.add(m);
-        gtag('event', 'scroll_depth', { percent: m });
-      }
+      if (pct >= m && !fired.has(m)) { fired.add(m); gtag('event', 'scroll_depth', { percent: m }); }
     });
   }
   window.addEventListener('scroll', check, { passive: true });
   check();
 })();
 
-/* ─────────── KPI 측정: 어느 섹션까지 실제로 봤는가 ─────────── */
+/* ═══════════ KPI: 어느 섹션까지 실제로 봤는가 ═══════════ */
 (function () {
   const seen = new Set();
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
       if (e.isIntersecting && !seen.has(e.target.id)) {
         seen.add(e.target.id);
         gtag('event', 'section_view', { section: e.target.id.replace('sec-', '') });
       }
     });
-  }, { threshold: 0.5 });
-  document.querySelectorAll('section').forEach(s => io.observe(s));
+  }, { threshold: 0.4 });
+  document.querySelectorAll('section[id]').forEach(s => io.observe(s));
 })();
 </script>
 </body>
