@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>로또 번호 추첨기</title>
+<title>S리그 | 성균관대 교내 축구 리그</title>
+<meta name="description" content="성균관대 교내 축구 리그 S리그의 조별 순위, 경기 결과, 플레이오프 대진을 한 곳에서 확인하세요.">
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FSRPMJ7JSD"></script>
@@ -17,148 +18,312 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: -apple-system, "Segoe UI", "Malgun Gothic", sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    display: flex;
-    justify-content: center;
-    padding: 48px 20px;
-    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+    background: #f2f2f5;
+    color: #16161a;
+    -webkit-text-size-adjust: 100%;
   }
-  .wrap { width: 100%; max-width: 440px; }
-  h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 6px; }
-  .sub { color: #6e6e73; font-size: 15px; margin-bottom: 28px; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 14px 56px; }
 
-  button {
-    width: 100%;
-    padding: 15px;
-    font-size: 17px;
-    font-weight: 600;
-    font-family: inherit;
+  /* ── 헤더 ── */
+  header {
+    background: linear-gradient(160deg, #0b6b3a, #064a28);
     color: #fff;
-    background: #0071e3;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    transition: background .2s;
+    padding: 30px 20px 26px;
+    margin: 0 -14px 16px;
   }
-  button:hover { background: #0077ed; }
-  button:active { transform: scale(.99); }
+  header .kicker { font-size: 12px; font-weight: 700; letter-spacing: .12em; opacity: .75; }
+  header h1 { font-size: 30px; font-weight: 800; letter-spacing: -0.03em; margin: 5px 0 4px; }
+  header p { font-size: 14px; opacity: .8; }
 
-  .balls { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; margin: 32px 0; min-height: 52px; }
-  .ball {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-weight: 700; font-size: 19px;
-    animation: pop .35s cubic-bezier(.2,.9,.3,1.4) backwards;
+  /* ── 우승 배너 ── */
+  .champ {
+    background: #fff; border-radius: 14px; padding: 18px 20px; margin-bottom: 22px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.07);
+    border-left: 4px solid #d4a017;
   }
-  @keyframes pop { from { transform: scale(0); opacity: 0; } }
-  .plus { align-self: center; color: #86868b; font-size: 20px; font-weight: 600; }
+  .champ .trophy { font-size: 30px; line-height: 1; }
+  .champ .label { font-size: 11px; font-weight: 700; color: #97803a; letter-spacing: .1em; }
+  .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.02em; margin-top: 2px; }
+  .champ .score { font-size: 13px; color: #6b6b73; margin-top: 3px; }
 
-  .history { margin-top: 36px; }
-  .history h2 { font-size: 13px; color: #6e6e73; font-weight: 600; margin-bottom: 12px; letter-spacing: .04em;
-                display: flex; justify-content: space-between; align-items: center; }
-  .clear {
-    width: auto; padding: 5px 11px;
-    font-size: 12px; font-weight: 600;
-    color: #6e6e73; background: #e8e8ed;
-    border-radius: 7px;
+  /* ── 섹션 ── */
+  section { margin-bottom: 30px; }
+  h2 {
+    font-size: 12px; font-weight: 700; color: #6b6b73;
+    letter-spacing: .1em; margin-bottom: 10px; padding-left: 2px;
   }
-  .clear:hover { background: #dedee3; }
-  .row {
-    background: #fff;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 8px;
-    font-size: 15px;
-    display: flex; justify-content: space-between;
+
+  /* ── 탭 ── */
+  .tabs { display: flex; gap: 6px; margin-bottom: 12px; }
+  .tab {
+    flex: 1; padding: 11px; border: none; border-radius: 10px;
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    background: #e3e3e8; color: #6b6b73; cursor: pointer;
+    transition: background .15s, color .15s;
   }
-  .row span:first-child { color: #86868b; font-variant-numeric: tabular-nums; }
-  .row span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .tab.on { background: #0b6b3a; color: #fff; }
+
+  /* ── 순위표 ── */
+  .card { background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.07); }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th {
+    font-size: 11px; font-weight: 600; color: #8b8b93; text-align: center;
+    padding: 10px 2px; border-bottom: 1px solid #ececf0; background: #fafafc;
+  }
+  td { font-size: 14px; text-align: center; padding: 11px 2px; border-bottom: 1px solid #f2f2f5; }
+  tr:last-child td { border-bottom: none; }
+  .c-rank { width: 30px; color: #8b8b93; font-size: 12px; font-weight: 600; }
+  .c-team { text-align: left !important; font-weight: 600; padding-left: 6px !important; letter-spacing: -0.02em; }
+  .c-wdl { color: #6b6b73; font-size: 13px; width: 62px; }
+  .c-gd { color: #6b6b73; width: 38px; font-size: 13px; }
+  .c-pts { font-weight: 800; width: 34px; }
+  tr.q td:first-child { box-shadow: inset 3px 0 0 #0b6b3a; }
+  tr.q .c-rank { color: #0b6b3a; }
+  .legend { font-size: 11px; color: #8b8b93; padding: 9px 12px; background: #fafafc; }
+  .legend b { color: #0b6b3a; }
+
+  /* ── 경기 결과 ── */
+  .match {
+    display: flex; align-items: center; padding: 10px 12px;
+    border-bottom: 1px solid #f2f2f5; font-size: 14px;
+  }
+  .match:last-child { border-bottom: none; }
+  .match .home { flex: 1; text-align: right; letter-spacing: -0.02em; }
+  .match .away { flex: 1; text-align: left; letter-spacing: -0.02em; }
+  .match .sc {
+    font-weight: 800; font-variant-numeric: tabular-nums;
+    padding: 3px 9px; margin: 0 9px; border-radius: 7px;
+    background: #f2f2f5; font-size: 14px; white-space: nowrap;
+  }
+  .match .w { font-weight: 700; }
+  .match .l { color: #9b9ba3; }
+
+  /* ── 플레이오프 ── */
+  .po { padding: 4px 0; }
+  .po-round {
+    font-size: 11px; font-weight: 700; color: #8b8b93; letter-spacing: .08em;
+    padding: 12px 12px 5px;
+  }
+  .po .note { font-size: 12px; color: #8b8b93; padding: 0 12px 11px; }
+
+  /* ── 다음 시즌 ── */
+  .next {
+    background: #fff; border-radius: 14px; padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.07); border: 1px dashed #c8c8d0;
+    text-align: center;
+  }
+  .next .dot {
+    display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    background: #0b6b3a; margin-right: 6px; vertical-align: middle;
+  }
+  .next h3 { font-size: 16px; font-weight: 700; margin-bottom: 7px; letter-spacing: -0.02em; }
+  .next p { font-size: 13.5px; color: #6b6b73; line-height: 1.65; }
+
+  footer { text-align: center; font-size: 11.5px; color: #a0a0a8; margin-top: 26px; line-height: 1.7; }
 </style>
 </head>
 <body>
+
+<header>
+  <div class="kicker">SKKU S-LEAGUE</div>
+  <h1>S리그</h1>
+  <p>2026학년도 1학기 · 12개 팀 · 최종 결과</p>
+</header>
+
 <div class="wrap">
-  <h1>로또 번호 추첨기</h1>
-  <p class="sub">1부터 45까지 중 6개와 보너스 번호를 뽑습니다.</p>
 
-  <button id="draw">번호 뽑기</button>
-
-  <div class="balls" id="balls"></div>
-
-  <div class="history">
-    <h2>추첨 기록 <button id="clear" class="clear">기록 지우기</button></h2>
-    <div id="history"></div>
+  <div class="champ">
+    <div class="trophy">🏆</div>
+    <div>
+      <div class="label">우승</div>
+      <div class="name">에스카라</div>
+      <div class="score">결승 5 : 0 르풋A</div>
+    </div>
   </div>
+
+  <section id="sec-table">
+    <h2>조별 리그 순위</h2>
+    <div class="tabs">
+      <button class="tab on" data-g="A">A조</button>
+      <button class="tab" data-g="B">B조</button>
+    </div>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th></th><th style="text-align:left;padding-left:6px">팀</th><th>승·무·패</th><th>득실</th><th>승점</th></tr>
+        </thead>
+        <tbody id="standings"></tbody>
+      </table>
+      <div class="legend"><b>■</b> 상위 3팀 플레이오프 진출 · 팀당 5경기</div>
+    </div>
+  </section>
+
+  <section id="sec-matches">
+    <h2>경기 결과 <span id="mg" style="color:#0b6b3a">A조</span></h2>
+    <div class="card" id="matches"></div>
+  </section>
+
+  <section id="sec-playoff">
+    <h2>플레이오프</h2>
+    <div class="card po" id="playoff"></div>
+  </section>
+
+  <section id="sec-next">
+    <div class="next">
+      <h3><span class="dot"></span>2학기 시즌은 여기서 업데이트됩니다</h3>
+      <p>개강과 함께 시작되는 다음 시즌부터는<br>라운드별 대진과 결과가 이 페이지에 바로 올라갑니다.<br>단톡방 안 찾아봐도 됩니다.</p>
+    </div>
+  </section>
+
+  <footer>
+    기계공학부 축구동아리 MES 제작<br>
+    경기 결과 정정·문의는 각 팀 임원진에게 전달해 주세요.
+  </footer>
 </div>
 
 <script>
-function colorOf(n) {
-  if (n <= 10) return '#fbc400';
-  if (n <= 20) return '#69c8f2';
-  if (n <= 30) return '#ff7272';
-  if (n <= 40) return '#aaa';
-  return '#b0d840';
-}
-
-function drawNumbers() {
-  const pool = Array.from({length: 45}, (_, i) => i + 1);
-  for (let i = pool.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [pool[i], pool[j]] = [pool[j], pool[i]];
+/* ─────────── 데이터 (2026학년도 1학기) ─────────── */
+const DATA = {
+  A: {
+    standings: [
+      { team: '플러렌',   w:4, d:1, l:0, gf:14, ga:4,  pts:13 },
+      { team: '헤르메스', w:3, d:1, l:1, gf:15, ga:8,  pts:10 },
+      { team: '파볼',     w:3, d:0, l:2, gf:13, ga:12, pts:9  },
+      { team: '팜',       w:2, d:1, l:2, gf:10, ga:7,  pts:7  },
+      { team: '르풋B',    w:1, d:1, l:3, gf:11, ga:10, pts:4  },
+      { team: '반달',     w:0, d:0, l:5, gf:1,  ga:23, pts:0  }
+    ],
+    matches: [
+      ['플러렌',6,0,'파볼'], ['플러렌',3,2,'르풋B'], ['플러렌',1,1,'헤르메스'],
+      ['플러렌',2,0,'반달'], ['플러렌',2,1,'팜'],
+      ['헤르메스',4,2,'르풋B'], ['헤르메스',7,1,'반달'], ['헤르메스',2,1,'팜'],
+      ['파볼',2,1,'르풋B'], ['파볼',3,1,'헤르메스'], ['파볼',6,0,'반달'],
+      ['팜',4,2,'파볼'], ['팜',3,0,'반달'], ['르풋B',1,1,'팜'], ['르풋B',5,0,'반달']
+    ]
+  },
+  B: {
+    standings: [
+      { team: '에스카라', w:4, d:1, l:0, gf:17, ga:3,  pts:13 },
+      { team: '르풋A',    w:4, d:1, l:0, gf:16, ga:4,  pts:13 },
+      { team: '발길질',   w:2, d:0, l:3, gf:16, ga:14, pts:6  },
+      { team: '메스',     w:2, d:0, l:3, gf:8,  ga:13, pts:6  },
+      { team: '퍼크',     w:1, d:0, l:4, gf:6,  ga:17, pts:3  },
+      { team: 'NFT',      w:1, d:0, l:4, gf:5,  ga:17, pts:3  }
+    ],
+    matches: [
+      ['에스카라',2,2,'르풋A'], ['에스카라',3,1,'메스'], ['에스카라',6,0,'퍼크'],
+      ['에스카라',3,0,'발길질'], ['에스카라',3,0,'NFT'],
+      ['르풋A',2,0,'메스'], ['르풋A',3,0,'퍼크'], ['르풋A',4,2,'발길질'], ['르풋A',5,0,'NFT'],
+      ['발길질',6,1,'퍼크'], ['발길질',6,3,'NFT'],
+      ['메스',3,2,'발길질'], ['메스',3,1,'NFT'],
+      ['퍼크',5,1,'메스'], ['NFT',1,0,'퍼크']
+    ]
   }
-  const main = pool.slice(0, 6).sort((a, b) => a - b);
-  return { main, bonus: pool[6] };
+};
+
+const PLAYOFF = [
+  { round: '6강', games: [
+      ['르풋A',1,0,'파볼',''],
+      ['헤르메스',1,0,'발길질','']
+  ], note: '조 1위 플러렌·에스카라는 4강 직행' },
+  { round: '4강', games: [
+      ['르풋A',2,0,'플러렌',''],
+      ['에스카라',1,1,'헤르메스','승부차기 4:1 에스카라 승']
+  ]},
+  { round: '3·4위전', games: [
+      ['플러렌',2,1,'헤르메스','']
+  ]},
+  { round: '결승', games: [
+      ['에스카라',5,0,'르풋A','']
+  ]}
+];
+
+/* ─────────── 렌더링 ─────────── */
+function renderStandings(g) {
+  document.getElementById('standings').innerHTML = DATA[g].standings.map((t, i) => {
+    const gd = t.gf - t.ga;
+    return '<tr class="' + (i < 3 ? 'q' : '') + '">' +
+      '<td class="c-rank">' + (i + 1) + '</td>' +
+      '<td class="c-team">' + t.team + '</td>' +
+      '<td class="c-wdl">' + t.w + '·' + t.d + '·' + t.l + '</td>' +
+      '<td class="c-gd">' + (gd > 0 ? '+' + gd : gd) + '</td>' +
+      '<td class="c-pts">' + t.pts + '</td></tr>';
+  }).join('');
 }
 
-let count = 0;
+function matchRow([h, hs, as, a, note]) {
+  const hc = hs > as ? 'w' : hs < as ? 'l' : '';
+  const ac = as > hs ? 'w' : as < hs ? 'l' : '';
+  return '<div class="match">' +
+    '<span class="home ' + hc + '">' + h + '</span>' +
+    '<span class="sc">' + hs + ' : ' + as + '</span>' +
+    '<span class="away ' + ac + '">' + a + '</span></div>' +
+    (note ? '<div class="note" style="text-align:center;padding:0 12px 9px">' + note + '</div>' : '');
+}
 
-function render({ main, bonus }) {
-  const box = document.getElementById('balls');
-  box.innerHTML = '';
-  main.forEach((n, i) => {
-    const el = document.createElement('div');
-    el.className = 'ball';
-    el.style.background = colorOf(n);
-    el.style.animationDelay = (i * 0.08) + 's';
-    el.textContent = n;
-    box.appendChild(el);
+function renderMatches(g) {
+  document.getElementById('matches').innerHTML = DATA[g].matches.map(matchRow).join('');
+  document.getElementById('mg').textContent = g + '조';
+}
+
+function renderPlayoff() {
+  document.getElementById('playoff').innerHTML = PLAYOFF.map(r =>
+    '<div class="po-round">' + r.round + '</div>' +
+    r.games.map(matchRow).join('') +
+    (r.note ? '<div class="note">' + r.note + '</div>' : '')
+  ).join('');
+}
+
+renderStandings('A');
+renderMatches('A');
+renderPlayoff();
+
+/* ─────────── 탭 ─────────── */
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const g = btn.dataset.g;
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('on', b === btn));
+    renderStandings(g);
+    renderMatches(g);
+    // KPI: 어느 조를 보는지 = 어느 팀 사람들이 들어오는지
+    gtag('event', 'group_tab', { group: g });
   });
+});
 
-  const plus = document.createElement('div');
-  plus.className = 'plus';
-  plus.textContent = '+';
-  plus.style.animationDelay = '0.48s';
-  box.appendChild(plus);
-
-  const b = document.createElement('div');
-  b.className = 'ball';
-  b.style.background = colorOf(bonus);
-  b.style.animationDelay = '0.56s';
-  b.textContent = bonus;
-  box.appendChild(b);
-
-  count++;
-  const row = document.createElement('div');
-  row.className = 'row';
-  row.innerHTML = '<span>' + count + '회</span><span>' + main.join(', ') + ' + ' + bonus + '</span>';
-  document.getElementById('history').prepend(row);
-}
-
-document.getElementById('draw').addEventListener('click', () => {
-  render(drawNumbers());
-  // KPI 측정: '번호 뽑기'를 몇 번 눌렀는지 GA로 전송
-  if (typeof gtag === 'function') {
-    gtag('event', 'draw_click', { draw_count: count });
+/* ─────────── KPI 측정: 스크롤 깊이 ─────────── */
+(function () {
+  const marks = [25, 50, 75, 100];
+  const fired = new Set();
+  function check() {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    const pct = max <= 0 ? 100 : Math.round((h.scrollTop / max) * 100);
+    marks.forEach(m => {
+      if (pct >= m && !fired.has(m)) {
+        fired.add(m);
+        gtag('event', 'scroll_depth', { percent: m });
+      }
+    });
   }
-});
+  window.addEventListener('scroll', check, { passive: true });
+  check();
+})();
 
-document.getElementById('clear').addEventListener('click', () => {
-  document.getElementById('history').innerHTML = '';
-  document.getElementById('balls').innerHTML = '';
-  count = 0;
-});
+/* ─────────── KPI 측정: 어느 섹션까지 실제로 봤는가 ─────────── */
+(function () {
+  const seen = new Set();
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !seen.has(e.target.id)) {
+        seen.add(e.target.id);
+        gtag('event', 'section_view', { section: e.target.id.replace('sec-', '') });
+      }
+    });
+  }, { threshold: 0.5 });
+  document.querySelectorAll('section').forEach(s => io.observe(s));
+})();
 </script>
 </body>
 </html>
