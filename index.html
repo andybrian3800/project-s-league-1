@@ -47,7 +47,15 @@
   .plus { align-self: center; color: #86868b; font-size: 20px; font-weight: 600; }
 
   .history { margin-top: 36px; }
-  .history h2 { font-size: 13px; color: #6e6e73; font-weight: 600; margin-bottom: 12px; letter-spacing: .04em; }
+  .history h2 { font-size: 13px; color: #6e6e73; font-weight: 600; margin-bottom: 12px; letter-spacing: .04em;
+                display: flex; justify-content: space-between; align-items: center; }
+  .clear {
+    width: auto; padding: 5px 11px;
+    font-size: 12px; font-weight: 600;
+    color: #6e6e73; background: #e8e8ed;
+    border-radius: 7px;
+  }
+  .clear:hover { background: #dedee3; }
   .row {
     background: #fff;
     border-radius: 10px;
@@ -70,7 +78,7 @@
   <div class="balls" id="balls"></div>
 
   <div class="history">
-    <h2>추첨 기록</h2>
+    <h2>추첨 기록 <button id="clear" class="clear">기록 지우기</button></h2>
     <div id="history"></div>
   </div>
 </div>
@@ -129,6 +137,12 @@ function render({ main, bonus }) {
 }
 
 document.getElementById('draw').addEventListener('click', () => render(drawNumbers()));
+
+document.getElementById('clear').addEventListener('click', () => {
+  document.getElementById('history').innerHTML = '';
+  document.getElementById('balls').innerHTML = '';
+  count = 0;
+});
 </script>
 </body>
 </html>
