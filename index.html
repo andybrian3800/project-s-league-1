@@ -26,6 +26,8 @@
     --bg: #f4f5f7;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  section[id] { scroll-margin-top: 104px; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
     background: var(--bg); color: var(--ink);
@@ -34,14 +36,56 @@
   .wrap { max-width: 1060px; margin: 0 auto; padding: 0 14px 60px; }
 
   /* ── 헤더 ── */
-  header {
-    background: linear-gradient(135deg, #0b6b3a 0%, #064a28 100%);
-    color: #fff; padding: 26px 0 24px;
+  header.site { background: #0e1113; color: #fff; position: sticky; top: 0; z-index: 50;
+                box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+  .bar { max-width: 1060px; margin: 0 auto; padding: 0 16px;
+         height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+  .brand b { font-size: 21px; font-weight: 800; letter-spacing: -0.05em; }
+  .brand b em { font-style: normal; color: #34d17a; }
+  .brand i { font-style: normal; font-size: 9.5px; font-weight: 800; letter-spacing: .14em;
+             color: #7d848a; border: 1px solid #2c3237; border-radius: 4px; padding: 2px 5px; }
+
+  .season { position: relative; flex: 0 0 auto; }
+  .season select {
+    appearance: none; -webkit-appearance: none;
+    font-family: inherit; font-size: 13px; font-weight: 700; color: #e8eaec;
+    background: #1a1f23; border: 1px solid #2c3237; border-radius: 8px;
+    padding: 8px 30px 8px 12px; cursor: pointer; letter-spacing: -0.02em;
   }
-  header .inner { max-width: 1060px; margin: 0 auto; padding: 0 20px; }
-  header .kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; opacity: .7; }
-  header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.03em; margin: 4px 0 3px; }
-  header p { font-size: 13.5px; opacity: .8; }
+  .season::after {
+    content: ''; position: absolute; right: 12px; top: 50%; margin-top: -2px; pointer-events: none;
+    border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 5px solid #8b9298;
+  }
+
+  .navtabs { border-top: 1px solid #1c2124; }
+  .navtabs .inner { max-width: 1060px; margin: 0 auto; padding: 0 16px; display: flex; gap: 2px; }
+  .navtabs a {
+    font-size: 13.5px; font-weight: 700; color: #9aa1a7; text-decoration: none;
+    padding: 11px 14px; letter-spacing: -0.03em; border-bottom: 2px solid transparent;
+  }
+  .navtabs a:hover { color: #fff; }
+  .navtabs a.on { color: #fff; border-bottom-color: #34d17a; }
+
+  /* 시즌 상태 띠 */
+  .hero { background: #fff; border-bottom: 1px solid var(--line); }
+  .hero .inner {
+    max-width: 1060px; margin: 0 auto; padding: 13px 16px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .hero .state {
+    font-size: 11.5px; font-weight: 800; letter-spacing: -0.02em;
+    color: #0b6b3a; background: #e8f5ee; border-radius: 20px; padding: 4px 10px;
+  }
+  .hero .meta { font-size: 12.5px; color: var(--gray-d); letter-spacing: -0.03em; }
+  .hero .meta b { color: var(--ink); font-weight: 700; }
+  .hero .dot { color: #cdcdd6; margin: 0 5px; }
+  .notice {
+    display: none; width: 100%; font-size: 12.5px; color: #8a6d14;
+    background: #fdf8e8; border: 1px solid #f0e0a8; border-radius: 8px; padding: 8px 11px;
+    letter-spacing: -0.03em;
+  }
+  .notice.show { display: block; }
 
   /* ── 공통 ── */
   .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
@@ -65,7 +109,10 @@
     border-radius: 12px; padding: 17px 19px;
     display: flex; align-items: center; gap: 14px;
   }
-  .champ .trophy { font-size: 29px; line-height: 1; }
+  .champ .clogo {
+    width: 58px; height: 58px; flex: 0 0 auto;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+  }
   .champ .label { font-size: 11px; font-weight: 700; color: #a8862c; letter-spacing: .09em; }
   .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; margin-top: 1px; }
   .champ .score { font-size: 12.5px; color: var(--gray); margin-top: 3px; }
@@ -299,13 +346,32 @@
 </head>
 <body>
 
-<header>
-  <div class="inner">
-    <div class="kicker">SKKU S-LEAGUE</div>
-    <h1>S리그</h1>
-    <p>2026학년도 1학기 · 12개 팀 · 최종 결과</p>
+<header class="site">
+  <div class="bar">
+    <div class="brand"><b>S<em>리그</em></b><i>SKKU</i></div>
+    <div class="season">
+      <select id="season" aria-label="시즌 선택">
+        <option value="26-1" selected>2026학년도 1학기</option>
+        <option value="26-2">2026학년도 2학기</option>
+      </select>
+    </div>
+  </div>
+  <div class="navtabs">
+    <div class="inner">
+      <a href="#sec-table" class="on">순위</a>
+      <a href="#sec-playoff">플레이오프</a>
+      <a href="#sec-league">경기 결과</a>
+    </div>
   </div>
 </header>
+
+<div class="hero">
+  <div class="inner">
+    <span class="state">시즌 종료</span>
+    <span class="meta"><b>12개 팀</b><span class="dot">·</span>2개 조<span class="dot">·</span>정규리그 <b>30경기</b><span class="dot">·</span>플레이오프 6팀</span>
+    <div class="notice" id="notice">2026학년도 2학기 시즌은 <b>개강과 함께 시작됩니다.</b> 대진이 나오는 대로 이 페이지에 바로 올라갑니다.</div>
+  </div>
+</div>
 
 <div class="wrap">
 
@@ -325,9 +391,9 @@
     <!-- 왼쪽: 우승 + 순위 -->
     <div class="col">
       <div class="champ">
-        <div class="trophy">🏆</div>
+        <div class="clogo" style="background-image:url(logos/eskara.png)"></div>
         <div>
-          <div class="label">우승</div>
+          <div class="label">🏆 2026-1 우승</div>
           <div class="name">에스카라</div>
           <div class="score">결승 5 : 0 르풋A</div>
         </div>
@@ -384,7 +450,7 @@ const STANDINGS = {
   A: [
     { team:'플러렌',   w:4, d:1, l:0, gf:14, ga:4,  pts:13 },
     { team:'헤르메스', w:3, d:1, l:1, gf:15, ga:8,  pts:10 },
-    { team:'파볼',     w:3, d:0, l:2, gf:13, ga:12, pts:9  },
+    { team:'파이어볼스',     w:3, d:0, l:2, gf:13, ga:12, pts:9  },
     { team:'팜',       w:2, d:1, l:2, gf:10, ga:7,  pts:7  },
     { team:'르풋B',    w:1, d:1, l:3, gf:11, ga:10, pts:4  },
     { team:'반달',     w:0, d:0, l:5, gf:1,  ga:23, pts:0  }
@@ -401,15 +467,15 @@ const STANDINGS = {
 
 /* 라운드로빈으로 분할한 5개 라운드 (각 라운드에 6팀 전원 1경기씩) */
 const ROUNDS = [
-  { A: [['플러렌',2,0,'반달'],   ['헤르메스',4,2,'르풋B'], ['팜',4,2,'파볼']],
+  { A: [['플러렌',2,0,'반달'],   ['헤르메스',4,2,'르풋B'], ['팜',4,2,'파이어볼스']],
     B: [['에스카라',3,0,'NFT'],  ['르풋A',3,0,'퍼크'],     ['메스',3,2,'발길질']] },
-  { A: [['플러렌',3,2,'르풋B'],  ['팜',3,0,'반달'],        ['파볼',3,1,'헤르메스']],
+  { A: [['플러렌',3,2,'르풋B'],  ['팜',3,0,'반달'],        ['파이어볼스',3,1,'헤르메스']],
     B: [['에스카라',6,0,'퍼크'], ['메스',3,1,'NFT'],       ['르풋A',4,2,'발길질']] },
-  { A: [['플러렌',2,1,'팜'],     ['파볼',2,1,'르풋B'],     ['헤르메스',7,1,'반달']],
+  { A: [['플러렌',2,1,'팜'],     ['파이어볼스',2,1,'르풋B'],     ['헤르메스',7,1,'반달']],
     B: [['에스카라',3,1,'메스'], ['발길질',6,1,'퍼크'],    ['르풋A',5,0,'NFT']] },
-  { A: [['플러렌',6,0,'파볼'],   ['헤르메스',2,1,'팜'],    ['르풋B',5,0,'반달']],
+  { A: [['플러렌',6,0,'파이어볼스'],   ['헤르메스',2,1,'팜'],    ['르풋B',5,0,'반달']],
     B: [['에스카라',3,0,'발길질'],['르풋A',2,0,'메스'],    ['NFT',1,0,'퍼크']] },
-  { A: [['플러렌',1,1,'헤르메스'],['파볼',6,0,'반달'],     ['르풋B',1,1,'팜']],
+  { A: [['플러렌',1,1,'헤르메스'],['파이어볼스',6,0,'반달'],     ['르풋B',1,1,'팜']],
     B: [['에스카라',2,2,'르풋A'], ['발길질',6,3,'NFT'],    ['퍼크',5,1,'메스']] }
 ];
 
@@ -425,7 +491,7 @@ const BRACKET = {
   quarter: [
     { bye:'에스카라', sub:'B조 1위<br>4강 직행' },
     { a:'헤르메스', as:1, b:'발길질', bs:0 },
-    { a:'르풋A',   as:1, b:'파볼',   bs:0 },
+    { a:'르풋A',   as:1, b:'파이어볼스',   bs:0 },
     { bye:'플러렌', sub:'A조 1위<br>4강 직행' }
   ],
   third: { a:'플러렌', as:2, b:'헤르메스', bs:1 }
@@ -435,14 +501,14 @@ const BRACKET = {
 /* 로고 파일이 준비되면 아래에 경로만 채우면 됩니다. 예: '메스': 'logos/mes.png' */
 const LOGOS = {
   '메스':'logos/mes.png',        '플러렌':'logos/fullerene.png', '헤르메스':'logos/hermes.png',
-  '파볼':'logos/fireballs.png',  '팜':'logos/pharm.png',         '르풋A':'logos/lefoot.png',
+  '파이어볼스':'logos/fireballs.png',  '팜':'logos/pharm.png',         '르풋A':'logos/lefoot.png',
   '르풋B':'logos/lefoot.png',    '반달':'logos/bandal.png',      '에스카라':'logos/eskara.png',
   'NFT':'logos/nft.png',
   '발길질':'logos/bgj.png',      '퍼크':'logos/perk.png'          // 임시 로고 (실제 로고 오면 교체)
 };
 const TEAMS = [
   { n:'메스', g:'B' },      // 기계공학부 MES — 맨 앞 고정
-  { n:'플러렌', g:'A' }, { n:'헤르메스', g:'A' }, { n:'파볼', g:'A' },
+  { n:'플러렌', g:'A' }, { n:'헤르메스', g:'A' }, { n:'파이어볼스', g:'A' },
   { n:'팜', g:'A' }, { n:'르풋B', g:'A' }, { n:'반달', g:'A' },
   { n:'에스카라', g:'B' }, { n:'르풋A', g:'B' }, { n:'발길질', g:'B' },
   { n:'퍼크', g:'B' }, { n:'NFT', g:'B' }
@@ -632,6 +698,37 @@ document.querySelectorAll('.tab').forEach(btn => {
     gtag('event', 'group_tab', { group: g });   // KPI: 어느 조 사람들이 들어오는가
   });
 });
+
+/* ═══════════ 시즌 선택 ═══════════ */
+document.getElementById('season').addEventListener('change', e => {
+  const v = e.target.value;
+  const notice = document.getElementById('notice');
+  if (v === '26-2') {
+    notice.classList.add('show');
+    e.target.value = '26-1';                      // 아직 데이터가 없으므로 되돌린다
+    // KPI: 다음 시즌을 찾아본 사람 = 실사용 수요 신호
+    gtag('event', 'season_peek', { season: '26-2' });
+  } else {
+    notice.classList.remove('show');
+  }
+});
+
+/* ═══════════ 상단 탭 활성화 ═══════════ */
+(function () {
+  const links = [...document.querySelectorAll('.navtabs a')];
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting) {
+        const id = '#' + e.target.id;
+        links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === id));
+      }
+    });
+  }, { rootMargin: '-110px 0px -60% 0px' });
+  ['sec-table', 'sec-playoff', 'sec-league'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) io.observe(el);
+  });
+})();
 
 /* ═══════════ KPI: 스크롤 깊이 ═══════════ */
 (function () {
