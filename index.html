@@ -90,6 +90,11 @@
   tr:last-child td { border-bottom: none; }
   .c-rank { width: 30px; color: var(--gray); font-size: 12px; font-weight: 700; }
   .c-team { text-align: left !important; font-weight: 700; padding-left: 7px !important; letter-spacing: -0.03em; }
+  .c-team .tl {
+    width: 19px; height: 19px; border-radius: 50%; display: inline-block; vertical-align: -4px;
+    margin-right: 6px; background-size: cover; background-position: center;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.09);
+  }
   .c-wdl { color: var(--gray-d); font-size: 13px; width: 64px; }
   .c-gd { color: var(--gray-d); width: 40px; font-size: 13px; }
   .c-pts { font-weight: 800; width: 36px; }
@@ -239,6 +244,7 @@
   }
   .chip .logo {
     width: 40px; height: 40px; border-radius: 50%;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.09);
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 800; color: #fff; letter-spacing: -0.04em;
     border: 2px solid transparent; transition: border-color .15s, transform .12s;
@@ -430,8 +436,11 @@ const BRACKET = {
 /* ═══════════ 팀 목록 · 로고 ═══════════ */
 /* 로고 파일이 준비되면 아래에 경로만 채우면 됩니다. 예: '메스': 'logos/mes.png' */
 const LOGOS = {
-  '플러렌':'', '헤르메스':'', '파볼':'', '팜':'', '르풋B':'', '반달':'',
-  '에스카라':'', '르풋A':'', '발길질':'', '메스':'', '퍼크':'', 'NFT':''
+  '메스':'logos/mes.png',        '플러렌':'logos/fullerene.png', '헤르메스':'logos/hermes.png',
+  '파볼':'logos/fireballs.png',  '팜':'logos/pharm.png',         '르풋A':'logos/lefoot.png',
+  '르풋B':'logos/lefoot.png',    '반달':'logos/bandal.png',      '에스카라':'logos/eskara.png',
+  'NFT':'logos/nft.png',
+  '발길질':'logos/bgj.png',      '퍼크':'logos/perk.png'          // 임시 로고 (실제 로고 오면 교체)
 };
 const TEAMS = [
   { n:'메스', g:'B' },      // 기계공학부 MES — 맨 앞 고정
@@ -440,6 +449,13 @@ const TEAMS = [
   { n:'에스카라', g:'B' }, { n:'르풋A', g:'B' }, { n:'발길질', g:'B' },
   { n:'퍼크', g:'B' }, { n:'NFT', g:'B' }
 ];
+function teamLogo(name) {
+  const src = LOGOS[name];
+  return src
+    ? '<i class="tl" style="background-image:url(' + src + ')"></i>'
+    : '<i class="tl" style="background:' + fallbackColor(name) + '"></i>';
+}
+
 /* 로고가 없을 때 쓸 임시 색상 (팀명 해시) */
 function fallbackColor(name) {
   let h = 0;
@@ -459,7 +475,7 @@ function renderStandings(g) {
     const gd = t.gf - t.ga;
     return '<tr class="' + (i < 3 ? 'q ' : '') + (t.team === MY ? 'mine' : '') + '">' +
       '<td class="c-rank">' + (i + 1) + '</td>' +
-      '<td class="c-team">' + t.team + '</td>' +
+      '<td class="c-team">' + teamLogo(t.team) + t.team + '</td>' +
       '<td class="c-wdl">' + t.w + '·' + t.d + '·' + t.l + '</td>' +
       '<td class="c-gd">' + (gd > 0 ? '+' + gd : gd) + '</td>' +
       '<td class="c-pts">' + t.pts + '</td></tr>';
