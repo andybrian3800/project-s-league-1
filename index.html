@@ -41,10 +41,9 @@
   .bar { max-width: 1060px; margin: 0 auto; padding: 0 16px;
          height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
-  .brand b { font-size: 21px; font-weight: 800; letter-spacing: -0.05em; }
-  .brand b em { font-style: normal; color: #34d17a; }
-  .brand i { font-style: normal; font-size: 9.5px; font-weight: 800; letter-spacing: .14em;
-             color: #7d848a; border: 1px solid #2c3237; border-radius: 4px; padding: 2px 5px; }
+  .brand b { font-size: 20px; font-weight: 800; letter-spacing: .01em; color: #fff; }
+  .brand i { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: -0.03em;
+             color: #9aa1a7; border: 1px solid #2c3237; border-radius: 4px; padding: 3px 6px; }
 
   .season { position: relative; flex: 0 0 auto; }
   .season select {
@@ -160,8 +159,8 @@
   .brow.gold .lb { color: #b8901c; }
   .brow.gold .lb em { display: block; font-style: normal; font-size: 13px; }
 
-  .r1 { display: grid; grid-template-columns: minmax(0, 250px); justify-content: center; }
-  .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .r1 { display: grid; grid-template-columns: minmax(0, 208px); justify-content: center; }
+  .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .r4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
   .g {
@@ -175,7 +174,7 @@
   }
   .g-t {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 11px; font-size: 14px; letter-spacing: -0.04em;
+    padding: 7px 10px; font-size: 13px; letter-spacing: -0.05em;
     color: var(--gray); min-width: 0;
   }
   .g-t + .g-t { border-top: 1px solid #f4f4f8; }
@@ -183,14 +182,14 @@
   .g-t b { font-variant-numeric: tabular-nums; font-weight: 700; padding-left: 8px; }
   .g-t.win { color: var(--ink); font-weight: 700; }
   .g-t.win b { color: var(--green); font-weight: 800; }
-  .g.final .g-t { font-size: 15px; padding: 11px 13px; }
+  .g.final .g-t { font-size: 13.5px; padding: 8px 11px; }
   .g.final .g-t.win b { color: #b8901c; }
   .g-note {
     font-size: 10.5px; color: var(--gray); padding: 5px 11px; text-align: center;
     background: #fafafc; border-top: 1px solid var(--line);
   }
   /* 6강 행: 더 작게 */
-  .r4 .g-t { padding: 7px 8px; font-size: 12.5px; }
+  .r4 .g-t { padding: 6px 7px; font-size: 12px; }
   .r4 .g-t b { padding-left: 5px; }
 
   /* 부전승 슬롯 */
@@ -206,7 +205,7 @@
   .bye.mine .t { color: #16161a; font-weight: 800; }
 
   /* 연결선 (SVG) — 카드 영역에만 걸치도록 라벨 거터만큼 비워둔다 */
-  .conn { display: block; width: 100%; height: 26px; }
+  .conn { display: block; width: 100%; height: 22px; }
   .conn line { stroke: #d7d7e0; stroke-width: 2; stroke-linecap: round; }
 
   .third {
@@ -218,6 +217,18 @@
   .third .tag { font-size: 10px; font-weight: 800; color: var(--gray); letter-spacing: .07em;
                 background: #eceef2; padding: 3px 8px; border-radius: 20px; }
   .third b { color: var(--ink); font-weight: 700; }
+
+  /* ── 예정 시즌(TBD) ── */
+  td.tbd { color: var(--gray); font-size: 13px; padding: 26px 10px !important; letter-spacing: -0.03em; }
+  .g-t.tbd { color: #a8a8b0; font-weight: 600; }
+  .g-t.tbd b { color: #c2c2ca; }
+  .bye.tbd .t { color: #a8a8b0; }
+  .rtbd { font-size: 13px; color: var(--gray); padding: 16px 14px; letter-spacing: -0.03em; }
+  .rtbd b { color: #b0b0b8; font-weight: 800; letter-spacing: .04em; }
+  .champ.up { border-left-color: #c3c6cd; }
+  .champ.up .clogo { display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .champ.up .label { color: var(--gray); }
+  .champ.up .name { color: var(--gray-d); }
 
   /* ── 라운드별 경기 ── */
   .round + .round { margin-top: 12px; }
@@ -348,7 +359,7 @@
 
 <header class="site">
   <div class="bar">
-    <div class="brand"><b>S<em>리그</em></b><i>SKKU</i></div>
+    <div class="brand"><b>S-LEAGUE</b><i>성균관대</i></div>
     <div class="season">
       <select id="season" aria-label="시즌 선택">
         <option value="26-1" selected>2026학년도 1학기</option>
@@ -367,8 +378,8 @@
 
 <div class="hero">
   <div class="inner">
-    <span class="state">시즌 종료</span>
-    <span class="meta"><b>12개 팀</b><span class="dot">·</span>2개 조<span class="dot">·</span>정규리그 <b>30경기</b><span class="dot">·</span>플레이오프 6팀</span>
+    <span class="state" id="hstate">시즌 종료</span>
+    <span class="meta" id="hmeta"><b>12개 팀</b><span class="dot">·</span>2개 조<span class="dot">·</span>정규리그 <b>30경기</b><span class="dot">·</span>플레이오프 6팀</span>
     <div class="notice" id="notice">2026학년도 2학기 시즌은 <b>개강과 함께 시작됩니다.</b> 대진이 나오는 대로 이 페이지에 바로 올라갑니다.</div>
   </div>
 </div>
@@ -390,14 +401,7 @@
   <div class="top">
     <!-- 왼쪽: 우승 + 순위 -->
     <div class="col">
-      <div class="champ">
-        <div class="clogo" style="background-image:url(logos/eskara.png)"></div>
-        <div>
-          <div class="label">🏆 2026-1 우승</div>
-          <div class="name">에스카라</div>
-          <div class="score">결승 5 : 0 르풋A</div>
-        </div>
-      </div>
+      <div class="champ" id="champ"></div>
 
       <section id="sec-table">
         <h2>조별 리그 순위</h2>
@@ -497,6 +501,22 @@ const BRACKET = {
   third: { a:'플러렌', as:2, b:'헤르메스', bs:1 }
 };
 
+/* 2026학년도 2학기: 조 추첨 전이라 팀 대신 진출 조건만 표시 */
+const BRACKET_TBD = {
+  final: { a:'4강 ① 승자', as:'-', b:'4강 ② 승자', bs:'-' },
+  semi: [
+    { a:'B조 1위', as:'-', b:'6강 ② 승자', bs:'-' },
+    { a:'6강 ① 승자', as:'-', b:'A조 1위', bs:'-' }
+  ],
+  quarter: [
+    { bye:'B조 1위', sub:'4강 직행' },
+    { a:'A조 2위', as:'-', b:'B조 3위', bs:'-' },
+    { a:'B조 2위', as:'-', b:'A조 3위', bs:'-' },
+    { bye:'A조 1위', sub:'4강 직행' }
+  ],
+  third: { a:'4강 ① 패자', as:'-', b:'4강 ② 패자', bs:'-' }
+};
+
 /* ═══════════ 팀 목록 · 로고 ═══════════ */
 /* 로고 파일이 준비되면 아래에 경로만 채우면 됩니다. 예: '메스': 'logos/mes.png' */
 const LOGOS = {
@@ -530,11 +550,18 @@ function fallbackColor(name) {
 let MY = localStorage.getItem('sleague_my') || '';   // 선택한 우리 팀
 let ONLY = false;                                     // 우리 팀 경기만 보기
 let CUR = 'A';                                        // 현재 보고 있는 조
+let SEASON = '26-1';                                  // 보고 있는 시즌
 
 /* ═══════════ 렌더링 ═══════════ */
 
 function renderStandings(g) {
   CUR = g;
+  if (SEASON === '26-2') {
+    document.getElementById('standings').innerHTML =
+      '<tr><td class="tbd" colspan="5">조 추첨 예정<br><span style="font-size:11.5px;color:#b0b0b8">' +
+      '개강 후 조 편성이 확정되면 순위표가 열립니다</span></td></tr>';
+    return;
+  }
   document.getElementById('standings').innerHTML = STANDINGS[g].map((t, i) => {
     const gd = t.gf - t.ga;
     return '<tr class="' + (i < 3 ? 'q ' : '') + (t.team === MY ? 'mine' : '') + '">' +
@@ -547,13 +574,15 @@ function renderStandings(g) {
 }
 
 function gameCard(m, extra) {
+  const tbd = SEASON === '26-2';
   if (m.bye) {                                   // 부전승 슬롯
-    return '<div class="bye' + (m.bye === MY ? ' mine' : '') + '">' +
+    return '<div class="bye' + (tbd ? ' tbd' : '') + (m.bye === MY ? ' mine' : '') + '">' +
            '<div class="t">' + m.bye + '</div><div class="s">' + m.sub + '</div></div>';
   }
-  const win = m.win || (m.as > m.bs ? m.a : m.bs > m.as ? m.b : null);
+  const win = tbd ? null : (m.win || (m.as > m.bs ? m.a : m.bs > m.as ? m.b : null));
   const row = (name, score) =>
-    '<div class="g-t' + (name === win ? ' win' : '') + (name === MY ? ' mine' : '') +
+    '<div class="g-t' + (name === win ? ' win' : '') + (tbd ? ' tbd' : '') +
+    (!tbd && name === MY ? ' mine' : '') +
     '"><span>' + name + '</span><b>' + score + '</b></div>';
   return '<div class="g' + (extra || '') + '">' +
     row(m.a, m.as) + row(m.b, m.bs) +
@@ -586,9 +615,10 @@ function brRow(label, cls, cards, gold) {
 }
 
 function renderBracket() {
-  const B = BRACKET;
+  const B = SEASON === '26-2' ? BRACKET_TBD : BRACKET;
+  const tbd = SEASON === '26-2';
   document.getElementById('bracket').innerHTML =
-    brRow('<em>🏆</em>결승', 'r1', gameCard(B.final, ' final'), true) +
+    brRow('<em>🏆</em>결승', 'r1', gameCard(B.final, tbd ? '' : ' final'), !tbd) +
     connector([50], 25) +
     brRow('4강', 'r2', B.semi.map(m => gameCard(m)).join('')) +
     connector([25, 75], 12.5) +
@@ -608,6 +638,14 @@ function matchRow([h, hs, as_, a]) {
 }
 
 function renderRounds() {
+  if (SEASON === '26-2') {
+    document.getElementById('rounds').innerHTML = [1, 2, 3, 4, 5].map(i =>
+      '<div class="round card">' +
+        '<div class="r-hd"><span class="n">' + i + 'R</span><span class="t">대진 미정</span></div>' +
+        '<div class="rtbd"><b>TBD</b> · 조 추첨 후 공개</div>' +
+      '</div>').join('');
+    return;
+  }
   const myG = (TEAMS.find(t => t.n === MY) || {}).g;
   const show = (ONLY && MY) ? [myG] : ['A', 'B'];    // 필터 켜면 우리 조만
   document.getElementById('rounds').innerHTML = ROUNDS.map((r, i) => {
@@ -645,7 +683,25 @@ function renderChips() {
   });
 }
 
+function renderChamp() {
+  const el = document.getElementById('champ');
+  if (SEASON === '26-2') {
+    el.className = 'champ up';
+    el.innerHTML = '<div class="clogo">🗓️</div><div>' +
+      '<div class="label">2026-2 시즌</div>' +
+      '<div class="name">개막 예정</div>' +
+      '<div class="score">개강과 함께 시작 · 조 추첨 대기</div></div>';
+  } else {
+    el.className = 'champ';
+    el.innerHTML = '<div class="clogo" style="background-image:url(logos/eskara.png)"></div><div>' +
+      '<div class="label">🏆 2026-1 우승</div>' +
+      '<div class="name">에스카라</div>' +
+      '<div class="score">결승 5 : 0 르풋A</div></div>';
+  }
+}
+
 function refresh() {
+  renderChamp();
   renderStandings(CUR);
   renderBracket();
   renderRounds();
@@ -701,16 +757,19 @@ document.querySelectorAll('.tab').forEach(btn => {
 
 /* ═══════════ 시즌 선택 ═══════════ */
 document.getElementById('season').addEventListener('change', e => {
-  const v = e.target.value;
-  const notice = document.getElementById('notice');
-  if (v === '26-2') {
-    notice.classList.add('show');
-    e.target.value = '26-1';                      // 아직 데이터가 없으므로 되돌린다
-    // KPI: 다음 시즌을 찾아본 사람 = 실사용 수요 신호
-    gtag('event', 'season_peek', { season: '26-2' });
-  } else {
-    notice.classList.remove('show');
-  }
+  SEASON = e.target.value;
+  const up = SEASON === '26-2';
+  document.getElementById('notice').classList.toggle('show', up);
+  document.getElementById('hstate').textContent = up ? '개막 예정' : '시즌 종료';
+  document.getElementById('hstate').style.cssText = up
+    ? 'color:#8a6d14;background:#fdf3d8' : '';
+  document.getElementById('hmeta').innerHTML = up
+    ? '조 추첨 예정<span class="dot">·</span>대진 확정 시 이 페이지에 바로 공개'
+    : '<b>12개 팀</b><span class="dot">·</span>2개 조<span class="dot">·</span>정규리그 <b>30경기</b>' +
+      '<span class="dot">·</span>플레이오프 6팀';
+  refresh();
+  // KPI: 다음 시즌을 찾아본 사람 = 실사용 수요 신호
+  gtag('event', 'season_view', { season: SEASON });
 });
 
 /* ═══════════ 상단 탭 활성화 ═══════════ */
