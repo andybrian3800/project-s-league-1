@@ -99,27 +99,32 @@
   .legend b { color: var(--green); }
 
   /* ── 토너먼트 브래킷 ── */
-  .bracket { padding: 16px 14px 14px; }
-  .br-label {
-    font-size: 11px; font-weight: 700; color: var(--gray);
-    letter-spacing: .07em; text-align: center; margin-bottom: 7px;
+  .bracket { padding: 18px 14px 15px; }
+  /* 왼쪽 라벨 거터 + 오른쪽 카드 영역 (연결선이 끊기지 않도록) */
+  .brow { display: grid; grid-template-columns: 32px minmax(0, 1fr); column-gap: 8px; align-items: center; }
+  .brow .lb {
+    font-size: 10.5px; font-weight: 800; color: var(--gray);
+    letter-spacing: -0.03em; text-align: center; line-height: 1.3;
   }
-  .br-row.one .cards { display: grid; grid-template-columns: minmax(0, 240px); justify-content: center; }
-  .br-row.two .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .brow.gold .lb { color: #b8901c; }
+  .brow.gold .lb em { display: block; font-style: normal; font-size: 13px; }
+
+  .r1 { display: grid; grid-template-columns: minmax(0, 250px); justify-content: center; }
+  .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .r4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
   .g {
     border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
     background: #fff; min-width: 0;
   }
-  .g.final { border: 1.5px solid #dfc069; box-shadow: 0 2px 8px rgba(216,167,42,.14); }
-  .g-hd {
-    font-size: 10.5px; font-weight: 700; color: var(--gray); letter-spacing: .06em;
-    padding: 6px 10px; background: #fafafc; border-bottom: 1px solid var(--line);
+  .g.final {
+    border: 1.5px solid #e0c164;
+    box-shadow: 0 3px 12px rgba(216,167,42,.16);
+    background: linear-gradient(#fffdf6, #fff);
   }
-  .g.final .g-hd { background: #fdf8ec; color: #a8862c; }
   .g-t {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 11px; font-size: 14px; letter-spacing: -0.03em;
+    padding: 9px 11px; font-size: 14px; letter-spacing: -0.04em;
     color: var(--gray); min-width: 0;
   }
   .g-t + .g-t { border-top: 1px solid #f4f4f8; }
@@ -127,31 +132,40 @@
   .g-t b { font-variant-numeric: tabular-nums; font-weight: 700; padding-left: 8px; }
   .g-t.win { color: var(--ink); font-weight: 700; }
   .g-t.win b { color: var(--green); font-weight: 800; }
+  .g.final .g-t { font-size: 15px; padding: 11px 13px; }
+  .g.final .g-t.win b { color: #b8901c; }
   .g-note {
-    font-size: 11px; color: var(--gray); padding: 6px 11px;
+    font-size: 10.5px; color: var(--gray); padding: 5px 11px; text-align: center;
     background: #fafafc; border-top: 1px solid var(--line);
   }
+  /* 6강 행: 더 작게 */
+  .r4 .g-t { padding: 7px 8px; font-size: 12.5px; }
+  .r4 .g-t b { padding-left: 5px; }
 
-  /* 연결선 */
-  .conn { position: relative; height: 22px; }
-  .conn i { position: absolute; background: #d9d9e2; }
-  .conn .stem { left: 50%; top: 0; width: 2px; height: 11px; margin-left: -1px; }
-  .conn .bar  { left: 25%; right: 25%; top: 10px; height: 2px; }
-  .conn .dl, .conn .dr { top: 10px; width: 2px; height: 12px; }
-  .conn .dl { left: 25%; } .conn .dr { left: 75%; }
-  .conn.straight .dl, .conn.straight .dr { top: 0; height: 22px; }
-
+  /* 부전승 슬롯 */
   .bye {
-    font-size: 11.5px; color: var(--gray); text-align: center;
-    margin-top: 12px; padding-top: 11px; border-top: 1px dashed var(--line); line-height: 1.6;
+    border: 1px dashed #d5d5de; border-radius: 10px; background: #fafafc;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 3px; padding: 9px 6px; min-width: 0;
   }
+  .bye .t { font-size: 12.5px; font-weight: 700; color: var(--gray-d); letter-spacing: -0.04em;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+  .bye .s { font-size: 9.5px; color: #a3a3ac; letter-spacing: -0.03em; text-align: center; line-height: 1.35; }
+  .bye.mine { background: #fff9d6; border-color: #ecd97a; }
+  .bye.mine .t { color: #16161a; font-weight: 800; }
+
+  /* 연결선 (SVG) — 카드 영역에만 걸치도록 라벨 거터만큼 비워둔다 */
+  .conn { display: block; width: 100%; height: 26px; }
+  .conn line { stroke: #d7d7e0; stroke-width: 2; stroke-linecap: round; }
+
   .third {
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    margin-top: 10px; padding: 9px 11px; background: #fafafc;
+    margin-top: 14px; padding: 10px 11px; background: #fafafc;
     border: 1px solid var(--line); border-radius: 9px;
-    font-size: 13px; color: var(--gray-d); letter-spacing: -0.02em;
+    font-size: 13px; color: var(--gray-d); letter-spacing: -0.03em;
   }
-  .third .tag { font-size: 10.5px; font-weight: 700; color: var(--gray); letter-spacing: .06em; }
+  .third .tag { font-size: 10px; font-weight: 800; color: var(--gray); letter-spacing: .07em;
+                background: #eceef2; padding: 3px 8px; border-radius: 20px; }
   .third b { color: var(--ink); font-weight: 700; }
 
   /* ── 라운드별 경기 ── */
@@ -184,6 +198,24 @@
     font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13.5px;
     padding: 3px 10px; margin: 0 10px; border-radius: 6px;
     background: #f2f3f6; color: var(--ink); white-space: nowrap;
+  }
+
+  /* 좁은 화면: 브래킷 6강 4칸이 깨지지 않도록 압축 */
+  @media (max-width: 560px) {
+    .bracket { padding: 14px 10px 12px; }
+    .brow { grid-template-columns: 22px minmax(0, 1fr); column-gap: 6px; }
+    .brow .lb { font-size: 9.5px; letter-spacing: -0.07em; }
+    .brow.gold .lb em { font-size: 12px; }
+    .r2 { gap: 8px; }
+    .r4 { gap: 5px; }
+    .g-t { font-size: 12.5px; padding: 8px 8px; }
+    .g.final .g-t { font-size: 14px; padding: 10px 11px; }
+    .r4 .g-t { padding: 6px 5px; font-size: 11px; }
+    .r4 .g-t b { padding-left: 3px; }
+    .bye { padding: 7px 4px; }
+    .bye .t { font-size: 11px; }
+    .bye .s { font-size: 8.5px; }
+    .conn { height: 22px; }
   }
 
   /* ── 내 팀 선택 바 ── */
@@ -377,16 +409,20 @@ const ROUNDS = [
     B: [['에스카라',2,2,'르풋A'], ['발길질',6,3,'NFT'],    ['퍼크',5,1,'메스']] }
 ];
 
-/* 브래킷: 결승 → 4강 → 6강 (위에서 아래로) */
+/* 브래킷: 결승 → 4강 → 6강 (위에서 아래로)
+   6강 행은 4강 두 경기의 진출 경로에 맞춰 4칸으로 배치한다.
+   4강① = 에스카라(직행) vs 헤르메스(6강 승자) / 4강② = 르풋A(6강 승자) vs 플러렌(직행) */
 const BRACKET = {
-  final: { hd:'결승', a:'에스카라', as:5, b:'르풋A', bs:0 },
+  final: { a:'에스카라', as:5, b:'르풋A', bs:0 },
   semi: [
-    { hd:'4강 ①', a:'에스카라', as:1, b:'헤르메스', bs:1, win:'에스카라', note:'승부차기 4 : 1 에스카라 승' },
-    { hd:'4강 ②', a:'르풋A',   as:2, b:'플러렌',   bs:0 }
+    { a:'에스카라', as:1, b:'헤르메스', bs:1, win:'에스카라', note:'승부차기 4 : 1' },
+    { a:'르풋A',   as:2, b:'플러렌',   bs:0 }
   ],
   quarter: [
-    { hd:'6강 ②', a:'헤르메스', as:1, b:'발길질', bs:0 },
-    { hd:'6강 ①', a:'르풋A',   as:1, b:'파볼',   bs:0 }
+    { bye:'에스카라', sub:'B조 1위<br>4강 직행' },
+    { a:'헤르메스', as:1, b:'발길질', bs:0 },
+    { a:'르풋A',   as:1, b:'파볼',   bs:0 },
+    { bye:'플러렌', sub:'A조 1위<br>4강 직행' }
   ],
   third: { a:'플러렌', as:2, b:'헤르메스', bs:1 }
 };
@@ -431,35 +467,52 @@ function renderStandings(g) {
 }
 
 function gameCard(m, extra) {
+  if (m.bye) {                                   // 부전승 슬롯
+    return '<div class="bye' + (m.bye === MY ? ' mine' : '') + '">' +
+           '<div class="t">' + m.bye + '</div><div class="s">' + m.sub + '</div></div>';
+  }
   const win = m.win || (m.as > m.bs ? m.a : m.bs > m.as ? m.b : null);
   const row = (name, score) =>
     '<div class="g-t' + (name === win ? ' win' : '') + (name === MY ? ' mine' : '') +
     '"><span>' + name + '</span><b>' + score + '</b></div>';
   return '<div class="g' + (extra || '') + '">' +
-    '<div class="g-hd">' + m.hd + '</div>' +
     row(m.a, m.as) + row(m.b, m.bs) +
     (m.note ? '<div class="g-note">' + m.note + '</div>' : '') +
     '</div>';
 }
 
+/* 부모 1칸 → 자식 2칸으로 갈라지는 연결선을 SVG로 그린다.
+   parents: 부모 칸 중심의 x좌표(%) 배열, 자식은 각 부모 아래 2칸씩. */
+function connector(parents, childStep) {
+  const H = 26, MID = 13, VE = ' vector-effect="non-scaling-stroke"';
+  let lines = '';
+  parents.forEach(px => {
+    const l = px - childStep, r = px + childStep;
+    lines += '<line x1="' + px + '" y1="0" x2="' + px + '" y2="' + MID + '"' + VE + '/>' +
+             '<line x1="' + l  + '" y1="' + MID + '" x2="' + r + '" y2="' + MID + '"' + VE + '/>' +
+             '<line x1="' + l  + '" y1="' + MID + '" x2="' + l + '" y2="' + H + '"' + VE + '/>' +
+             '<line x1="' + r  + '" y1="' + MID + '" x2="' + r + '" y2="' + H + '"' + VE + '/>';
+  });
+  // 라벨 거터(32px + 8px gap)만큼 비우고 카드 영역에만 선을 그린다
+  return '<div class="brow"><div></div>' +
+         '<svg class="conn" viewBox="0 0 100 ' + H + '" preserveAspectRatio="none">' +
+         lines + '</svg></div>';
+}
+
+function brRow(label, cls, cards, gold) {
+  return '<div class="brow' + (gold ? ' gold' : '') + '">' +
+         '<div class="lb">' + label + '</div>' +
+         '<div class="' + cls + '">' + cards + '</div></div>';
+}
+
 function renderBracket() {
   const B = BRACKET;
-  const conn = '<div class="conn"><i class="stem"></i><i class="bar"></i><i class="dl"></i><i class="dr"></i></div>';
-  const connS = '<div class="conn straight"><i class="dl"></i><i class="dr"></i></div>';
-
   document.getElementById('bracket').innerHTML =
-    '<div class="br-row one"><div class="br-label">결승</div><div class="cards">' +
-      gameCard(Object.assign({ hd: '🏆 결승' }, B.final), ' final') +
-    '</div></div>' +
-    conn +
-    '<div class="br-row two"><div class="br-label">4강</div><div class="cards">' +
-      B.semi.map(m => gameCard(m)).join('') +
-    '</div></div>' +
-    connS +
-    '<div class="br-row two"><div class="br-label">6강</div><div class="cards">' +
-      B.quarter.map(m => gameCard(m)).join('') +
-    '</div></div>' +
-    '<div class="bye">조 1위 <b>에스카라</b>(B조) · <b>플러렌</b>(A조)은 6강 없이 4강 직행</div>' +
+    brRow('<em>🏆</em>결승', 'r1', gameCard(B.final, ' final'), true) +
+    connector([50], 25) +
+    brRow('4강', 'r2', B.semi.map(m => gameCard(m)).join('')) +
+    connector([25, 75], 12.5) +
+    brRow('6강', 'r4', B.quarter.map(m => gameCard(m)).join('')) +
     '<div class="third"><span class="tag">3·4위전</span>' +
       '<span><b>' + B.third.a + '</b> ' + B.third.as + ' : ' + B.third.bs + ' ' + B.third.b + '</span></div>';
 }
