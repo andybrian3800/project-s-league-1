@@ -44,7 +44,8 @@
   .brand b { font-size: 20px; font-weight: 800; letter-spacing: .01em; color: #fff; white-space: nowrap; }
   .brand i { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: -0.03em;
              color: #9aa1a7; border: 1px solid #2c3237; border-radius: 4px; padding: 3px 6px; white-space: nowrap; }
-  @media (max-width: 420px) { .brand i { display: none; } }
+  /* 캠퍼스 버튼에 캠퍼스명이 다 적혀 있으므로 좁은 화면에선 브랜드 옆 배지를 숨긴다 */
+  @media (max-width: 640px) { .brand i { display: none; } }
 
   .hright { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
 
@@ -82,7 +83,8 @@
 
   .navtabs { border-top: 1px solid #1c2124; }
   .navtabs .inner { max-width: 1060px; margin: 0 auto; padding: 0 16px;
-                    display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+                    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+                    flex-wrap: wrap; }
   .navtabs .links { display: flex; gap: 2px; min-width: 0; }
   .navtabs a {
     font-size: 13.5px; font-weight: 700; color: #9aa1a7; text-decoration: none;
@@ -100,9 +102,11 @@
   }
   .cam:hover { color: #fff; }
   .cam.on { background: var(--green-l); border-color: var(--green-l); color: #fff; }
-  @media (max-width: 560px) {
+  @media (max-width: 640px) {
     .navtabs a { padding: 11px 9px; font-size: 12.5px; }
-    .cam { padding: 5px 8px; font-size: 11px; }
+    .cam { padding: 6px 9px; font-size: 11px; }
+    /* 캠퍼스 버튼이 길어져 줄이 바뀌면 아래 여백을 준다 */
+    .cams { padding: 0 0 8px; }
   }
 
   /* 시즌 상태 띠 */
@@ -440,8 +444,8 @@
         <a href="#sec-league">경기 결과</a>
       </div>
       <div class="cams" id="cams">
-        <button class="cam on" data-c="nsc">자과캠</button>
-        <button class="cam" data-c="hss">인사캠</button>
+        <button class="cam on" data-c="nsc">자연과학캠퍼스</button>
+        <button class="cam" data-c="hss">인문사회캠퍼스</button>
       </div>
     </div>
   </div>
@@ -512,7 +516,7 @@
 
   <footer>
     기계공학부 축구동아리 MES 제작<br>
-    자과캠 S리그 · 인사캠 성축배 기록 · 경기 결과 정정·문의는 각 팀 임원진에게 전달해 주세요.
+    자연과학캠퍼스 S리그 · 인문사회캠퍼스 성축배 기록 · 경기 결과 정정·문의는 각 팀 임원진에게 전달해 주세요.
   </footer>
 </div>
 
@@ -707,7 +711,7 @@ const HSS_BRACKET_TBD = {
 /* ═══════════ 캠퍼스 정의 ═══════════ */
 const DATA = {
   nsc: {
-    short:'자과캠', badge:'자연과학캠퍼스', brand:'S-LEAGUE', league:'S리그',
+    short:'자연과학캠퍼스', badge:'자연과학캠퍼스', brand:'S-LEAGUE', league:'S리그',
     fixTitle:'조별 리그전 · 라운드별 결과', brTitle:'플레이오프 대진',
     docTitle:'S리그 | 성균관대 자연과학캠퍼스 축구 리그',
     logos: {
@@ -742,7 +746,7 @@ const DATA = {
   },
 
   hss: {
-    short:'인사캠', badge:'인문사회캠퍼스', brand:'성축배', league:'성축배',
+    short:'인문사회캠퍼스', badge:'인문사회캠퍼스', brand:'성축배', league:'성축배',
     fixTitle:'조별 리그전 · 토너먼트 전 경기', brTitle:'토너먼트 대진',
     docTitle:'성축배 | 성균관대 인문사회캠퍼스 축구 대회',
     logos: {
