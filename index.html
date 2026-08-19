@@ -969,11 +969,60 @@ const MID = new Map();
   }));
 })();
 
-/* 응원 수 (이 기기에 저장) */
+/* ═══════════ 응원 수 ═══════════
+   아래 SUPA에 주소·키를 넣으면 모든 사람의 응원이 합산됩니다(서버 저장).
+   비어 있으면 이 기기에만 저장됩니다. 설정 방법은 supabase_setup.sql 참고. */
+const SUPA = {
+  url: '',   // 예: https://xxxxxxxx.supabase.co
+  key: ''    // anon public key
+};
+const SUPA_ON = () => !!(SUPA.url && SUPA.key);
+
 const CHEER_KEY = 'sl_cheer_v1';
 let CHEER = {};
-try { CHEER = JSON.parse(localStorage.getItem(CHEER_KEY) || '{}'); } catch (e) { CHEER = {}; }
+if (!SUPA_ON()) {
+  try { CHEER = JSON.parse(localStorage.getItem(CHEER_KEY) || '{}'); } catch (e) { CHEER = {}; }
+}
 const cheerOf = id => CHEER[id] || { h: 0, a: 0 };
+
+/* 서버에 쌓인 전체 응원 수를 한 번에 받아온다 */
+async function loadCheers() {
+  if (!SUPA_ON()) return;
+  try {
+    const r = await fetch(SUPA.url + '/rest/v1/cheers?select=match_id,home,away', {
+      headers: { apikey: SUPA.key, Authorization: 'Bearer ' + SUPA.key }
+    });
+    if (!r.ok) return;
+    (await r.json()).forEach(row => { CHEER[row.match_id] = { h: row.home, a: row.away }; });
+    renderRounds();
+  } catch (e) { /* 서버가 죽어도 사이트는 그대로 동작한다 */ }
+}
+
+/* 연타를 모아서 0.8초에 한 번만 서버로 보낸다 */
+const pending = {};
+let flushT = null;
+function queueServer(id, side, n) {
+  if (!SUPA_ON()) return;
+  (pending[id] = pending[id] || { h: 0, a: 0 })[side] += n;
+  clearTimeout(flushT);
+  flushT = setTimeout(flushCheers, 800);
+}
+async function flushCheers() {
+  for (const id of Object.keys(pending)) {
+    const p = pending[id];
+    delete pending[id];
+    for (const side of ['h', 'a']) {
+      if (!p[side]) continue;
+      try {
+        await fetch(SUPA.url + '/rest/v1/rpc/cheer', {
+          method: 'POST',
+          headers: { apikey: SUPA.key, Authorization: 'Bearer ' + SUPA.key, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ p_match: id, p_side: side, p_n: p[side] })
+        });
+      } catch (e) { /* 실패해도 화면 숫자는 그대로 둔다 */ }
+    }
+  }
+}
 const grow = (n, tot) => tot ? Math.max(0.3, n / tot) : 1;
 
 function goalList(txt, side) {
@@ -1005,7 +1054,9 @@ function matchDetail(id, h, a, meta) {
         barLogo(a) + '<span class="cn">' + c.a.toLocaleString() + '</span></button>' +
       '<span class="badge">종료</span>' +
     '</div>' +
-    '<div class="chint">누르는 만큼 올라갑니다 · 응원 수는 이 기기에 저장됩니다</div>' +
+    '<div class="chint">' + (SUPA_ON()
+      ? '누르는 만큼 올라갑니다 · 모두의 응원이 합산됩니다'
+      : '누르는 만큼 올라갑니다 · 응원 수는 이 기기에 저장됩니다') + '</div>' +
   '</div>';
 }
 
@@ -1067,8 +1118,9 @@ document.getElementById('rounds').addEventListener('click', e => {
   if (btn) {                                   // 응원 버튼
     const wrap = btn.closest('.mwrap'), id = wrap.dataset.id, side = btn.dataset.side;
     const c = CHEER[id] || (CHEER[id] = { h: 0, a: 0 });
-    c[side]++;
-    try { localStorage.setItem(CHEER_KEY, JSON.stringify(CHEER)); } catch (err) {}
+    c[side]++;                                  // 화면은 먼저 올리고
+    if (SUPA_ON()) queueServer(id, side, 1);    // 서버 반영은 뒤따라간다
+    else { try { localStorage.setItem(CHEER_KEY, JSON.stringify(CHEER)); } catch (err) {} }
     paintCheer(wrap);
     popThumb(btn.parentNode, e);
     queueCheerEvent(id, wrap.dataset[side === 'h' ? 'th' : 'ta']);
@@ -1270,6 +1322,7 @@ document.getElementById('applink').addEventListener('click', () => {
 
 /* ═══════════ 초기화 ═══════════ */
 setCampus(CAMPUS, false);
+loadCheers();   // 서버에 쌓인 응원 수 반영 (설정 안 됐으면 그냥 넘어감)
 
 /* ═══════════ 상단 탭 활성화 ═══════════ */
 (function () {
