@@ -291,6 +291,18 @@
     font-size: 11px; font-weight: 700; color: var(--gray); letter-spacing: .06em;
     padding: 9px 14px 4px;
   }
+  /* 라운드·스테이지 필터 */
+  .sfil { display: flex; gap: 6px; overflow-x: auto; padding: 1px 1px 12px; scrollbar-width: thin; }
+  .sfil button {
+    flex: 0 0 auto; font-family: inherit; font-size: 12.5px; font-weight: 700; letter-spacing: -0.03em;
+    padding: 7px 13px; border-radius: 20px; border: 1px solid var(--line);
+    background: #fff; color: var(--gray); cursor: pointer; white-space: nowrap;
+    transition: background .15s, color .15s, border-color .15s;
+  }
+  .sfil button.on { background: var(--green); border-color: var(--green); color: #fff; }
+  .sfil button.ko { color: #b8901c; }
+  .sfil button.ko.on { background: #b8901c; border-color: #b8901c; color: #fff; }
+
   .mwrap { padding: 9px 12px; }
   .mwrap + .mwrap { border-top: 1px solid #f6f6fa; }
   .mwrap.mine { background: #fff9d6; }
@@ -446,12 +458,12 @@
 <div class="wrap">
 
   <div class="mybar">
-    <div class="cap">우리 팀 결과 보기 <span class="hint">팀을 누르면 해당 팀 경기가 형광으로 표시됩니다</span></div>
+    <div class="cap">우리 팀 결과 보기 <span class="hint">팀을 누르면 그 팀 경기만 모아서 보여줍니다</span></div>
     <div class="chips" id="chips"></div>
     <div class="myctl" id="myctl">
-      <div class="txt"><b id="myname"></b> 선택됨</div>
+      <div class="txt" id="mytxt"></div>
       <div class="btns">
-        <button id="only">우리 팀 경기만</button>
+        <button id="only">전체 경기 보기</button>
         <button id="reset" class="ghost">해제</button>
       </div>
     </div>
@@ -487,6 +499,7 @@
   <!-- 아래: 리그전 -->
   <section id="sec-league" style="margin-top:26px">
     <h2 id="fixTitle">조별 리그전 · 라운드별 결과</h2>
+    <div class="sfil" id="sfil"></div>
     <div id="rounds"></div>
   </section>
 
@@ -774,8 +787,9 @@ let CAMPUS = localStorage.getItem('sl_campus') || 'nsc';
 if (!DATA[CAMPUS]) CAMPUS = 'nsc';
 let SEASON = '26-1';
 let MY = '';
-let ONLY = false;
+let ONLY = true;    // 팀을 고르면 기본으로 그 팀 경기만 (전체 보기로 되돌릴 수 있음)
 let CUR = 'A';
+let STAGE = '';     // 라운드·스테이지 필터 ('' = 전체)
 
 const C  = () => DATA[CAMPUS];
 const S  = () => DATA[CAMPUS].seasons[SEASON];
@@ -899,6 +913,23 @@ function matchRow(m) {
     '</div></div>';
 }
 
+/* 라운드(자과캠) · 조/토너먼트(인사캠) 필터 버튼 */
+function renderFilter() {
+  const bar = document.getElementById('sfil');
+  if (S().upcoming) { bar.innerHTML = ''; return; }
+  const btn = (n, label, ko) =>
+    '<button data-s="' + n + '" class="' + (ko ? 'ko ' : '') + (STAGE === n ? 'on' : '') + '">' + label + '</button>';
+  bar.innerHTML = btn('', '전체') + S().blocks.map(b => btn(b.n, b.n, b.ko)).join('');
+  bar.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      STAGE = b.dataset.s;
+      renderFilter();
+      renderRounds();
+      gtag('event', 'stage_filter', { campus: CAMPUS, stage: STAGE || 'all' });
+    });
+  });
+}
+
 function renderRounds() {
   const box = document.getElementById('rounds');
   if (S().upcoming) {
@@ -909,16 +940,21 @@ function renderRounds() {
       '</div>').join('');
     return;
   }
-  const blocks = S().blocks.map(b => {
-    const cols = b.cols.map(c => {
+  const blocks = S().blocks.filter(b => !STAGE || b.n === STAGE).map(b => {
+    let cols = b.cols.map(c => {
       let ms = c.ms;
       if (ONLY && MY) ms = ms.filter(m => m[0] === MY || m[3] === MY);
       return { g: c.g, ms: ms };
     });
+    if (ONLY && MY) cols = cols.filter(c => c.ms.length);   // 우리 팀이 없는 조 칸은 아예 뺀다
     return { b: b, cols: cols, cnt: cols.reduce((s, c) => s + c.ms.length, 0) };
   }).filter(x => !(ONLY && MY) || x.cnt > 0);
 
-  if (!blocks.length) { box.innerHTML = '<div class="card rtbd">우리 팀 경기가 없습니다.</div>'; return; }
+  if (!blocks.length) {
+    box.innerHTML = '<div class="card rtbd">' +
+      (MY ? '<b>' + MY + '</b> 경기가 이 구간에는 없습니다.' : '표시할 경기가 없습니다.') + '</div>';
+    return;
+  }
 
   box.innerHTML = blocks.map(x => {
     const two = x.cols.length > 1;
@@ -1001,24 +1037,27 @@ function refresh() {
   renderTabs();
   renderStandings();
   renderBracket();
+  renderFilter();
   renderRounds();
   document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.t === MY));
   document.getElementById('myctl').classList.toggle('show', !!MY);
-  document.getElementById('myname').textContent = MY;
-  document.getElementById('only').classList.toggle('on', ONLY);
+  document.getElementById('mytxt').innerHTML = '<b>' + MY + '</b>' + (ONLY ? ' 경기만 보는 중' : ' 선택됨');
+  document.getElementById('only').textContent = ONLY ? '전체 경기 보기' : '우리 팀 경기만';
 }
 
 /* ═══════════ 우리 팀 ═══════════ */
 function selectTeam(name, g) {
   if (MY === name) { clearTeam(); return; }
   MY = name;
+  ONLY = true;                                // 팀을 고르면 그 팀 경기만 모아서 보여준다
+  STAGE = '';                                 // 라운드 필터는 풀어서 전 경기를 보여준다
   localStorage.setItem('sl_my_' + CAMPUS, MY);
   if (GROUPS().indexOf(g) >= 0) CUR = g;      // 우리 팀이 속한 조로 순위표 자동 전환
   refresh();
   gtag('event', 'team_select', { campus: CAMPUS, team: name });
 }
 function clearTeam() {
-  MY = ''; ONLY = false;
+  MY = ''; ONLY = true;
   localStorage.removeItem('sl_my_' + CAMPUS);
   refresh();
 }
@@ -1034,7 +1073,7 @@ function setCampus(c, fire) {
   CAMPUS = c;
   localStorage.setItem('sl_campus', c);
   MY = localStorage.getItem('sl_my_' + c) || '';
-  ONLY = false;
+  ONLY = true; STAGE = '';
   CUR = (teamOf(MY).g && GROUPS().indexOf(teamOf(MY).g) >= 0) ? teamOf(MY).g : GROUPS()[0];
   document.querySelectorAll('.cam').forEach(b => b.classList.toggle('on', b.dataset.c === c));
   renderChips();
@@ -1049,6 +1088,7 @@ document.querySelectorAll('.cam').forEach(b => {
 /* ═══════════ 시즌 선택 ═══════════ */
 document.getElementById('season').addEventListener('change', e => {
   SEASON = e.target.value;
+  STAGE = '';
   if (GROUPS().indexOf(CUR) < 0) CUR = GROUPS()[0];
   refresh();
   gtag('event', 'season_view', { campus: CAMPUS, season: SEASON });
