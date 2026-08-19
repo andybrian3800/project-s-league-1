@@ -325,6 +325,61 @@
   .mwrap.mine .match .w { color: #16161a; }
   .mwrap.mine .match .sc { background: #ffd400; color: #33300f; }
 
+  /* ── 경기 상세: 득점 기록 + 응원 ── */
+  .mwrap { cursor: pointer; }
+  .mwrap:hover { background: #fbfbfd; }
+  .mwrap.mine:hover { background: #fff6c9; }
+  .mmore {
+    text-align: center; font-size: 10.5px; color: #b0b0b8;
+    margin-top: 6px; letter-spacing: -0.03em;
+  }
+  .mwrap.open .mmore { color: var(--green); font-weight: 700; }
+
+  .mdet { display: none; margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 11px; cursor: default; }
+  .mwrap.open .mdet { display: block; }
+  .dsec {
+    font-size: 10px; font-weight: 800; color: var(--gray); letter-spacing: .08em;
+    text-align: center; margin-bottom: 8px;
+  }
+  .goals { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0 12px; margin-bottom: 14px; }
+  .goals .gline { background: var(--line); }
+  .gside { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--gray-d); letter-spacing: -0.03em; }
+  .gside.h { align-items: flex-end; text-align: right; }
+  .gside.a { align-items: flex-start; text-align: left; }
+  .gside .none { color: #c2c2ca; font-size: 11px; }
+  .nogoal { font-size: 11.5px; color: #b0b0b8; text-align: center; padding: 2px 0 14px; letter-spacing: -0.03em; }
+
+  .cheer { position: relative; display: flex; gap: 6px; align-items: stretch; }
+  .cb {
+    position: relative; flex: 1 1 0; min-width: 27%;
+    border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+    padding: 11px 13px; display: flex; align-items: center; gap: 9px;
+    transition: flex-grow .4s cubic-bezier(.2,.7,.3,1), filter .12s;
+  }
+  .cb:active { filter: brightness(.94); }
+  .cb.h { background: #cfe0fa; color: #1b3f6b; }
+  .cb.a { background: #f6ecd2; color: #6b5715; flex-direction: row-reverse; }
+  .cb .bl {
+    width: 26px; height: 26px; border-radius: 50%; flex: 0 0 auto;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+  }
+  .cb .cn { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+  .cheer .badge {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: #fff; border-radius: 20px; font-size: 10.5px; font-weight: 800;
+    color: var(--gray-d); padding: 4px 10px; box-shadow: 0 1px 5px rgba(0,0,0,.13);
+    pointer-events: none; white-space: nowrap;
+  }
+  .chint { font-size: 10.5px; color: #b8b8c0; text-align: center; margin-top: 7px; letter-spacing: -0.03em; }
+
+  .pop { position: absolute; pointer-events: none; font-size: 19px; animation: rise .9s ease-out forwards; }
+  @keyframes rise {
+    from { opacity: .5;  transform: translate(-50%, 0) scale(.85); }
+    60%  { opacity: .35; }
+    to   { opacity: 0;   transform: translate(-50%, -48px) scale(1.3); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pop { display: none; } .cb { transition: none; } }
+
   /* 좁은 화면: 브래킷 4칸이 깨지지 않도록 압축 */
   @media (max-width: 560px) {
     .bracket { padding: 14px 10px 12px; }
@@ -901,21 +956,131 @@ function renderBracket() {
       '<span><b>' + B.third.a + '</b> ' + B.third.as + ' : ' + B.third.bs + ' ' + B.third.b + '</span></div>';
 }
 
+/* ── 경기 식별자: 응원 수를 경기마다 따로 저장하려면 고유 키가 필요하다.
+      필터를 걸면 배열 순서가 바뀌므로 원본 데이터 기준으로 미리 붙여둔다. ── */
+const MID = new Map();
+(function buildMatchIds() {
+  Object.keys(DATA).forEach(cp => Object.keys(DATA[cp].seasons).forEach(sn => {
+    const s = DATA[cp].seasons[sn];
+    if (!s.blocks) return;
+    s.blocks.forEach(b => b.cols.forEach((c, ci) => c.ms.forEach((m, mi) => {
+      MID.set(m, cp + '|' + sn + '|' + b.n + '|' + ci + '|' + mi);
+    })));
+  }));
+})();
+
+/* 응원 수 (이 기기에 저장) */
+const CHEER_KEY = 'sl_cheer_v1';
+let CHEER = {};
+try { CHEER = JSON.parse(localStorage.getItem(CHEER_KEY) || '{}'); } catch (e) { CHEER = {}; }
+const cheerOf = id => CHEER[id] || { h: 0, a: 0 };
+const grow = (n, tot) => tot ? Math.max(0.3, n / tot) : 1;
+
+function goalList(txt, side) {
+  if (!txt) return '<div class="none">-</div>';
+  return txt.split(',').map(s => s.trim()).filter(Boolean)
+    .map(s => side === 'h' ? '<div>' + s + ' ⚽</div>' : '<div>⚽ ' + s + '</div>').join('');
+}
+
+function barLogo(n) {
+  const src = C().logos[n];
+  return src ? '<i class="bl" style="background-image:url(' + src + ')"></i>'
+             : '<i class="bl" style="background:' + fallbackColor(n) + '"></i>';
+}
+
+function matchDetail(id, h, a, meta) {
+  const hg = meta && meta.h, ag = meta && meta.a;
+  const c = cheerOf(id), tot = c.h + c.a;
+  const goals = (hg || ag)
+    ? '<div class="goals"><div class="gside h">' + goalList(hg, 'h') + '</div>' +
+      '<div class="gline"></div><div class="gside a">' + goalList(ag, 'a') + '</div></div>'
+    : '<div class="nogoal">등록된 득점 기록이 없습니다</div>';
+  return '<div class="mdet">' +
+    '<div class="dsec">득점</div>' + goals +
+    '<div class="dsec">응원</div>' +
+    '<div class="cheer">' +
+      '<button class="cb h" data-side="h" style="flex-grow:' + grow(c.h, tot) + '">' +
+        barLogo(h) + '<span class="cn">' + c.h.toLocaleString() + '</span></button>' +
+      '<button class="cb a" data-side="a" style="flex-grow:' + grow(c.a, tot) + '">' +
+        barLogo(a) + '<span class="cn">' + c.a.toLocaleString() + '</span></button>' +
+      '<span class="badge">종료</span>' +
+    '</div>' +
+    '<div class="chint">누르는 만큼 올라갑니다 · 응원 수는 이 기기에 저장됩니다</div>' +
+  '</div>';
+}
+
 function matchRow(m) {
   const [h, hs, as_, a, meta] = m;
+  const id = MID.get(m) || '';
   const mine = (MY && (h === MY || a === MY)) ? ' mine' : '';
   const top = meta && (meta.d || meta.note)
     ? '<div class="mtop">' + (meta.d || '') +
       (meta.note ? (meta.d ? '<span class="dot"> · </span>' : '') + '<span class="pf">' + meta.note + '</span>' : '') +
       '</div>'
     : '';
-  return '<div class="mwrap' + mine + '">' + top +
+  return '<div class="mwrap' + mine + '" data-id="' + id + '" data-th="' + h + '" data-ta="' + a + '">' + top +
     '<div class="match">' +
       '<span class="home' + (hs > as_ ? ' w' : '') + '">' + h + '</span>' +
       '<span class="sc">' + hs + ' : ' + as_ + '</span>' +
       '<span class="away' + (as_ > hs ? ' w' : '') + '">' + a + '</span>' +
-    '</div></div>';
+    '</div>' +
+    '<div class="mmore">기록 · 응원 ▾</div>' +
+    matchDetail(id, h, a, meta) +
+  '</div>';
 }
+
+/* ── 응원 동작 ── */
+function paintCheer(wrap) {
+  const c = cheerOf(wrap.dataset.id), tot = c.h + c.a;
+  const hb = wrap.querySelector('.cb.h'), ab = wrap.querySelector('.cb.a');
+  hb.style.flexGrow = grow(c.h, tot);
+  ab.style.flexGrow = grow(c.a, tot);
+  hb.querySelector('.cn').textContent = c.h.toLocaleString();
+  ab.querySelector('.cn').textContent = c.a.toLocaleString();
+}
+
+function popThumb(box, ev) {
+  const r = box.getBoundingClientRect();
+  const el = document.createElement('span');
+  el.className = 'pop';
+  el.textContent = '👍';
+  el.style.left = (ev.clientX - r.left) + 'px';
+  el.style.top  = (ev.clientY - r.top - 12) + 'px';
+  box.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+/* GA에는 연타를 한 번에 묶어서 보낸다 (KPI: 어느 팀에 응원이 몰리는가) */
+const cheerQ = {}, cheerT = {};
+function queueCheerEvent(id, team) {
+  const k = id + '|' + team;
+  cheerQ[k] = (cheerQ[k] || 0) + 1;
+  clearTimeout(cheerT[k]);
+  cheerT[k] = setTimeout(() => {
+    gtag('event', 'cheer', { campus: CAMPUS, match: id, team: team, count: cheerQ[k] });
+    cheerQ[k] = 0;
+  }, 1500);
+}
+
+document.getElementById('rounds').addEventListener('click', e => {
+  const btn = e.target.closest('.cb');
+  if (btn) {                                   // 응원 버튼
+    const wrap = btn.closest('.mwrap'), id = wrap.dataset.id, side = btn.dataset.side;
+    const c = CHEER[id] || (CHEER[id] = { h: 0, a: 0 });
+    c[side]++;
+    try { localStorage.setItem(CHEER_KEY, JSON.stringify(CHEER)); } catch (err) {}
+    paintCheer(wrap);
+    popThumb(btn.parentNode, e);
+    queueCheerEvent(id, wrap.dataset[side === 'h' ? 'th' : 'ta']);
+    return;
+  }
+  if (e.target.closest('.mdet')) return;       // 상세 안쪽 클릭은 접지 않는다
+  const wrap = e.target.closest('.mwrap');
+  if (!wrap) return;
+  const open = wrap.classList.toggle('open');
+  wrap.querySelector('.mmore').textContent = open ? '접기 ▴' : '기록 · 응원 ▾';
+  if (open) gtag('event', 'match_open', { campus: CAMPUS, match: wrap.dataset.id });
+});
 
 /* 라운드(자과캠) · 조/토너먼트(인사캠) 필터 버튼 */
 function renderFilter() {
