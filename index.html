@@ -138,18 +138,38 @@
 
   /* ── 상단 빌보드: "여긴 교내 축구 리그다"를 한눈에 ── */
   .bb { position: relative; overflow: hidden; background: #0b0e10; color: #fff; }
+  /* 잔디 줄무늬: 아주 천천히 흘러가서 화면이 살아 있는 느낌만 준다 */
   .bb::before {
-    content: ''; position: absolute; inset: 0;
+    content: ''; position: absolute; top: 0; bottom: 0; left: -120px; right: -120px;
     background:
       repeating-linear-gradient(104deg, rgba(255,255,255,.035) 0 46px, transparent 46px 92px),
       radial-gradient(120% 160% at 12% -30%, rgba(18,138,75,.62), transparent 62%),
-      radial-gradient(90% 130% at 102% 0%, rgba(255,212,0,.15), transparent 58%);
+      radial-gradient(90% 130% at 102% 0%, rgba(255,212,0,.13), transparent 58%);
+    animation: pitch 26s linear infinite;
   }
+  @keyframes pitch { from { transform: translateX(0); } to { transform: translateX(92px); } }
+  /* 스포트라이트가 왼쪽에서 오른쪽으로 한 번씩 훑고 지나간다 */
+  .bb .sweep {
+    position: absolute; top: -40%; bottom: -40%; width: 34%; left: -40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.07) 45%, transparent);
+    transform: skewX(-14deg); animation: sweep 7.5s ease-in-out infinite; pointer-events: none;
+  }
+  @keyframes sweep { 0%, 55% { left: -40%; } 92%, 100% { left: 120%; } }
   .bb::after {   /* 아래쪽 잔디 라인 */
     content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
-    background: linear-gradient(90deg, var(--green-n), var(--gold) 55%, var(--green-n));
+    background: linear-gradient(90deg, var(--green-n), var(--gold) 30%, var(--green-n) 60%, var(--gold) 90%, var(--green-n));
+    background-size: 220% 100%; animation: line 9s linear infinite;
   }
-  .bb-in { position: relative; max-width: 1060px; margin: 0 auto; padding: 26px 16px 22px; }
+  @keyframes line { from { background-position: 0 0; } to { background-position: 220% 0; } }
+
+  .bb-in { position: relative; max-width: 1060px; margin: 0 auto; padding: 28px 16px 24px; }
+  /* 등장: 위에서 아래로 한 줄씩 자리를 잡는다 */
+  .bb-kick, .bb-title, .bb-sub, .bb-stats { animation: rise .7s cubic-bezier(.2,.8,.3,1) both; }
+  .bb-title { animation-delay: .07s; }
+  .bb-sub   { animation-delay: .14s; }
+  .bb-stats { animation-delay: .21s; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
   .bb-kick {
     display: inline-flex; align-items: center; gap: 6px;
     font-size: 11px; font-weight: 800; letter-spacing: .11em;
@@ -157,25 +177,37 @@
     border: 1px solid rgba(52,209,122,.34); padding: 5px 11px; border-radius: var(--r-pill);
   }
   .bb-title {
-    margin-top: 12px; display: flex; align-items: center; gap: 11px; flex-wrap: wrap;
-    font-size: 38px; font-weight: 900; letter-spacing: -0.05em; line-height: 1.02;
+    margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    font-size: 40px; font-weight: 900; letter-spacing: -0.05em; line-height: 1.02;
   }
+  /* 리그 이름 위로 금속 광택이 흐른다 */
   .bb-title em {
     font-style: normal;
-    background: linear-gradient(92deg, #ffffff 12%, #7cf0ae 52%, var(--gold) 96%);
+    background: linear-gradient(100deg,
+      #cfd6da 0%, #ffffff 18%, #7cf0ae 34%, #ffffff 46%, var(--gold) 60%, #ffffff 74%, #cfd6da 100%);
+    background-size: 280% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: gloss 6s ease-in-out infinite;
   }
-  .bb-title .ball { font-size: 32px; animation: kick 3.2s ease-in-out infinite; }
-  @keyframes kick {
-    0%, 70%, 100% { transform: translateY(0) rotate(0); }
-    78% { transform: translateY(-10px) rotate(-18deg); }
-    86% { transform: translateY(-3px) rotate(9deg); }
+  @keyframes gloss { 0% { background-position: 0% 0; } 55%, 100% { background-position: 280% 0; } }
+  .bb-title .ball {
+    font-size: 33px; display: inline-block;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,.55));
+    animation: roll 7s cubic-bezier(.32,.06,.24,1) infinite;
+  }
+  @keyframes roll {
+    0%, 58%   { transform: translateY(0) rotate(0deg); }
+    72%       { transform: translateY(-13px) rotate(200deg); }
+    82%       { transform: translateY(0) rotate(330deg); }
+    88%       { transform: translateY(-4px) rotate(348deg); }
+    94%, 100% { transform: translateY(0) rotate(360deg); }
   }
   .bb-tag {
-    font-size: 12.5px; font-weight: 800; letter-spacing: -0.02em; color: #0b0e10;
-    background: var(--gold); border-radius: var(--r-s); padding: 5px 9px; align-self: center;
+    font-size: 12px; font-weight: 700; letter-spacing: -0.01em; color: #9aa1a7;
+    background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.14);
+    border-radius: var(--r-pill); padding: 5px 11px; align-self: center;
   }
-  .bb-sub { margin-top: 9px; font-size: 14px; color: #b6c0c6; letter-spacing: var(--ls); }
+  .bb-sub { margin-top: 10px; font-size: 14px; color: #b6c0c6; letter-spacing: var(--ls); }
   .bb-sub b { color: #e8eaec; font-weight: 700; }
   .bb-stats { margin-top: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .bb .state {
@@ -194,13 +226,14 @@
   .notice b { color: #fff; }
   @media (max-width: 640px) {
     .bb-in { padding: 20px 14px 18px; }
-    .bb-title { font-size: 28px; gap: 8px; margin-top: 10px; }
-    .bb-title .ball { font-size: 24px; }
-    .bb-tag { font-size: 11px; padding: 4px 8px; }
+    .bb-title { font-size: 29px; gap: 9px; margin-top: 10px; }
+    .bb-title .ball { font-size: 25px; }
+    .bb-tag { font-size: 11px; padding: 4px 9px; }
     .bb-sub { font-size: 12.5px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bb-title .ball { animation: none; }
+    .bb-title .ball, .bb-title em, .bb::before, .bb::after, .bb .sweep,
+    .bb-kick, .bb-title, .bb-sub, .bb-stats { animation: none; }
     .eatbtn::after { animation: none; }
   }
 
@@ -232,6 +265,23 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 15px; font-weight: 800; color: #fff; letter-spacing: -0.04em;
   }
+  /* 이스터에그: 우승 카드를 누르면 폭죽이 터진다 */
+  .champ { cursor: pointer; user-select: none; transition: box-shadow .18s, transform .18s; }
+  .champ:hover { box-shadow: 0 4px 18px rgba(216,167,42,.22); transform: translateY(-1px); }
+  .champ.up { cursor: default; }
+  .champ.up:hover { box-shadow: none; transform: none; }
+  .champ.pop { animation: champpop .55s cubic-bezier(.2,.9,.3,1); }
+  @keyframes champpop {
+    0%   { transform: scale(1); }
+    32%  { transform: scale(1.035) rotate(-.4deg); box-shadow: 0 8px 30px rgba(216,167,42,.45); }
+    100% { transform: scale(1); }
+  }
+  .champ.pop .clogo { animation: trophy .55s ease-out; }
+  @keyframes trophy { 30% { transform: scale(1.16) rotate(-9deg); } 60% { transform: scale(1.06) rotate(5deg); } }
+  #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; display: none; }
+  #fx.on { display: block; }
+  @media (prefers-reduced-motion: reduce) { .champ.pop, .champ.pop .clogo { animation: none; } }
+
   .champ .label { font-size: 11px; font-weight: 700; color: #a8862c; letter-spacing: .09em; }
   .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; margin-top: 1px; }
   .champ .score { font-size: 12.5px; color: var(--gray); margin-top: 3px; }
@@ -646,6 +696,7 @@
 </header>
 
 <div class="bb">
+  <span class="sweep"></span>
   <div class="bb-in">
     <span class="bb-kick" id="bbKick">성균관대학교 자연과학캠퍼스</span>
     <h1 class="bb-title">
@@ -653,7 +704,7 @@
       <span class="bb-tag" id="bbTag">교내 축구 리그</span>
     </h1>
     <p class="bb-sub" id="bbSub">
-      조별 순위 · 토너먼트 대진 · <b>전 경기 결과</b> · 👏 응원까지 한 곳에서
+      조별 순위 · 토너먼트 대진 · <b>전 경기 결과</b> · 응원까지 한 곳에서
     </p>
     <div class="bb-stats">
       <span class="state" id="hstate">시즌 종료</span>
@@ -727,6 +778,8 @@
     자연과학캠퍼스 S리그 · 인문사회캠퍼스 성축배 기록 · 경기 결과 정정·문의는 각 팀 임원진에게 전달해 주세요.
   </footer>
 </div>
+
+<canvas id="fx" aria-hidden="true"></canvas>
 
 <!-- 오늘 뭐먹지? 팝업 (시간 경과 · 캠퍼스 전환 시) -->
 <div class="eatpop" id="eatpop" role="dialog" aria-modal="true" aria-labelledby="eatTitle">
@@ -940,7 +993,7 @@ const DATA = {
   nsc: {
     short:'자연과학캠퍼스', badge:'자연과학캠퍼스', brand:'S-LEAGUE', league:'S리그',
     tag:'교내 축구 리그',
-    sub:'12개 팀이 한 학기 동안 겨루는 자연과학캠퍼스 축구 리그<span class="dot">·</span>순위 · 대진 · <b>전 경기 결과</b> · 👏 응원',
+    sub:'12개 팀이 한 학기 동안 겨루는 자연과학캠퍼스 축구 리그<span class="dot">·</span>순위 · 대진 · <b>전 경기 결과</b> · 응원',
     fixTitle:'조별 리그전 · 라운드별 결과', brTitle:'플레이오프 대진',
     docTitle:'S리그 | 성균관대 자연과학캠퍼스 축구 리그',
     logos: {
@@ -977,7 +1030,7 @@ const DATA = {
   hss: {
     short:'인문사회캠퍼스', badge:'인문사회캠퍼스', brand:'성축배', league:'성축배',
     tag:'교내 축구 대회',
-    sub:'15개 팀이 맞붙는 인문사회캠퍼스 축구 대회<span class="dot">·</span>조별 순위 · 토너먼트 · <b>전 경기 결과</b> · 👏 응원',
+    sub:'15개 팀이 맞붙는 인문사회캠퍼스 축구 대회<span class="dot">·</span>조별 순위 · 토너먼트 · <b>전 경기 결과</b> · 응원',
     fixTitle:'조별 리그전 · 토너먼트 전 경기', brTitle:'토너먼트 대진',
     docTitle:'성축배 | 성균관대 인문사회캠퍼스 축구 대회',
     logos: {
@@ -1226,7 +1279,7 @@ function matchDetail(id, h, a, meta) {
     : '<div class="nogoal">등록된 득점 기록이 없습니다</div>';
   return '<div class="mdet">' +
     '<div class="dsec">득점</div>' + goals +
-    '<div class="dsec cheer-hd">👏 응원하기 — 팀을 눌러 응원</div>' +
+    '<div class="dsec cheer-hd">응원하기 — 우리 팀을 눌러 주세요</div>' +
     '<div class="cheer">' +
       '<button class="cb h" data-side="h" style="flex-grow:' + grow(c.h, tot) + '">' +
         barLogo(h) + '<span class="cn">' + c.h.toLocaleString() + '</span>' +
@@ -1245,7 +1298,7 @@ function matchDetail(id, h, a, meta) {
 /* 접힌 상태에서도 응원이 있다는 걸 알 수 있게 버튼 라벨에 응원 수를 얹는다 */
 function moreLabel(id) {
   const c = cheerOf(id), tot = c.h + c.a;
-  return tot ? '👏 응원 ' + tot.toLocaleString() + ' · 기록 보기' : '👏 응원하기 · 기록 보기';
+  return tot ? '응원 ' + tot.toLocaleString() + ' · 경기 기록 보기' : '응원하기 · 경기 기록 보기';
 }
 
 function matchRow(m) {
@@ -1526,6 +1579,70 @@ document.getElementById('season').addEventListener('change', e => {
 /* ═══════════ 팀 프로젝트 링크 ═══════════ */
 document.getElementById('applink').addEventListener('click', () => {
   gtag('event', 'outbound_click', { target: 'today-eat', from: 'header' });
+});
+
+/* ═══════════ 이스터에그: 우승 카드 폭죽 ═══════════ */
+const celebrate = (function () {
+  const cvs = document.getElementById('fx'), ctx = cvs.getContext('2d');
+  const COLORS = ['#ffd400', '#34d17a', '#128a4b', '#ff9c40', '#f4632c', '#ffffff', '#7cf0ae', '#d8a72a'];
+  let parts = [], raf = null;
+
+  function fit() {
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    cvs.width = innerWidth * dpr; cvs.height = innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function burst(x, y, n, power) {
+    for (let i = 0; i < n; i++) {
+      const a = -Math.PI / 2 + (Math.random() - .5) * Math.PI * 1.05;
+      const sp = power * (.55 + Math.random() * .75);
+      parts.push({
+        x: x, y: y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp,
+        w: 5 + Math.random() * 6, h: 7 + Math.random() * 8,
+        rot: Math.random() * Math.PI, vr: (Math.random() - .5) * .38,
+        c: COLORS[(Math.random() * COLORS.length) | 0],
+        life: 0, max: 95 + Math.random() * 55
+      });
+    }
+  }
+  function tick() {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    parts = parts.filter(p => p.life < p.max && p.y < innerHeight + 60);
+    for (const p of parts) {
+      p.life++;
+      p.vy += .33; p.vx *= .988; p.vy *= .988;
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = Math.max(0, 1 - p.life / p.max);
+      ctx.fillStyle = p.c;
+      // 회전에 따라 폭을 줄여 종이조각이 팔랑이는 느낌을 낸다
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * (.35 + .65 * Math.abs(Math.cos(p.rot))));
+      ctx.restore();
+    }
+    if (parts.length) raf = requestAnimationFrame(tick);
+    else { cvs.classList.remove('on'); raf = null; }
+  }
+  addEventListener('resize', () => { if (raf) fit(); });
+
+  return function (el) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (parts.length > 320) return;                 // 연타해도 과하게 쌓이지 않게
+    fit(); cvs.classList.add('on');
+    const r = el.getBoundingClientRect();
+    const y = r.top + r.height * .55;
+    burst(r.left + r.width * .16, y, 42, 12);
+    burst(r.right - r.width * .16, y, 42, 12);
+    setTimeout(() => { burst(r.left + r.width / 2, r.top + r.height * .4, 34, 15); if (!raf) { cvs.classList.add('on'); raf = requestAnimationFrame(tick); } }, 240);
+    if (!raf) raf = requestAnimationFrame(tick);
+  };
+})();
+
+document.getElementById('champ').addEventListener('click', function () {
+  if (S().upcoming) return;                          // 아직 우승팀이 없는 시즌은 조용히
+  celebrate(this);
+  this.classList.remove('pop'); void this.offsetWidth; this.classList.add('pop');
+  gtag('event', 'champ_confetti', { campus: CAMPUS, season: SEASON, team: S().champ.team });
 });
 
 /* ═══════════ 오늘 뭐먹지? 팝업 ═══════════
