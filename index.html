@@ -164,11 +164,11 @@
 
   .bb-in { position: relative; max-width: 1060px; margin: 0 auto; padding: 28px 16px 24px; }
   /* 등장: 위에서 아래로 한 줄씩 자리를 잡는다 */
-  .bb-kick, .bb-title, .bb-sub, .bb-stats { animation: rise .7s cubic-bezier(.2,.8,.3,1) both; }
+  .bb-kick, .bb-title, .bb-sub, .bb-stats { animation: bbrise .7s cubic-bezier(.2,.8,.3,1) both; }
   .bb-title { animation-delay: .07s; }
   .bb-sub   { animation-delay: .14s; }
   .bb-stats { animation-delay: .21s; }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes bbrise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 
   .bb-kick {
     display: inline-flex; align-items: center; gap: 6px;
@@ -270,17 +270,17 @@
   .champ:hover { box-shadow: 0 4px 18px rgba(216,167,42,.22); transform: translateY(-1px); }
   .champ.up { cursor: default; }
   .champ.up:hover { box-shadow: none; transform: none; }
-  .champ.pop { animation: champpop .55s cubic-bezier(.2,.9,.3,1); }
+  .champ.boom { animation: champpop .55s cubic-bezier(.2,.9,.3,1); }
   @keyframes champpop {
     0%   { transform: scale(1); }
     32%  { transform: scale(1.035) rotate(-.4deg); box-shadow: 0 8px 30px rgba(216,167,42,.45); }
     100% { transform: scale(1); }
   }
-  .champ.pop .clogo { animation: trophy .55s ease-out; }
+  .champ.boom .clogo { animation: trophy .55s ease-out; }
   @keyframes trophy { 30% { transform: scale(1.16) rotate(-9deg); } 60% { transform: scale(1.06) rotate(5deg); } }
   #fx { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 300; display: none; }
   #fx.on { display: block; }
-  @media (prefers-reduced-motion: reduce) { .champ.pop, .champ.pop .clogo { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .champ.boom, .champ.boom .clogo { animation: none; } }
 
   .champ .label { font-size: 11px; font-weight: 700; color: #a8862c; letter-spacing: .09em; }
   .champ .name { font-size: 21px; font-weight: 800; letter-spacing: -0.03em; margin-top: 1px; }
@@ -1641,7 +1641,7 @@ const celebrate = (function () {
 document.getElementById('champ').addEventListener('click', function () {
   if (S().upcoming) return;                          // 아직 우승팀이 없는 시즌은 조용히
   celebrate(this);
-  this.classList.remove('pop'); void this.offsetWidth; this.classList.add('pop');
+  this.classList.remove('boom'); void this.offsetWidth; this.classList.add('boom');
   gtag('event', 'champ_confetti', { campus: CAMPUS, season: SEASON, team: S().champ.team });
 });
 
