@@ -19,15 +19,24 @@
   :root {
     --green: #0b6b3a;
     --green-l: #128a4b;
+    --green-n: #34d17a;      /* 어두운 배경 위 강조 */
     --line: #e9e9ef;
     --gray: #8b8b93;
     --gray-d: #5c5c66;
     --ink: #16161a;
     --bg: #f4f5f7;
+    --dark: #0e1113;
+    --dark-2: #1a1f23;
+    --dark-line: #2c3237;
+    --gold: #ffd400;
+    --eat: linear-gradient(135deg, #ff9c40, #f4632c);   /* 오늘 뭐먹지 브랜드 */
+    /* 디자인 통일용 공통 값 */
+    --r-s: 8px; --r-m: 11px; --r-l: 14px; --r-pill: 999px;
+    --ls: -0.03em;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  section[id] { scroll-margin-top: 104px; }
+  section[id] { scroll-margin-top: 112px; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
     background: var(--bg); color: var(--ink);
@@ -36,45 +45,63 @@
   .wrap { max-width: 1060px; margin: 0 auto; padding: 0 14px 60px; }
 
   /* ── 헤더 ── */
-  header.site { background: #0e1113; color: #fff; position: sticky; top: 0; z-index: 50;
+  header.site { background: var(--dark); color: #fff; position: sticky; top: 0; z-index: 50;
                 box-shadow: 0 1px 0 rgba(255,255,255,.06); }
   .bar { max-width: 1060px; margin: 0 auto; padding: 0 16px;
-         height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+         height: 60px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .brand { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
   .brand b { font-size: 20px; font-weight: 800; letter-spacing: .01em; color: #fff; white-space: nowrap; }
   .brand i { font-style: normal; font-size: 10.5px; font-weight: 700; letter-spacing: -0.03em;
              color: #9aa1a7; border: 1px solid #2c3237; border-radius: 4px; padding: 3px 6px; white-space: nowrap; }
   /* 캠퍼스 버튼에 캠퍼스명이 다 적혀 있으므로 좁은 화면에선 브랜드 옆 배지를 숨긴다 */
   @media (max-width: 640px) { .brand i { display: none; } }
+  /* 아주 좁은 화면: 바로 아래 빌보드가 리그 이름을 더 크게 보여주므로
+     헤더 브랜드는 접고 그 자리를 '오늘 뭐먹지?' 버튼에 내준다 */
+  @media (max-width: 430px) {
+    .brand { display: none; }
+    .bar { justify-content: flex-end; }
+  }
 
-  .hright { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; }
+  .hright { display: flex; align-items: center; gap: 9px; flex: 0 0 auto; }
 
-  .applink {
-    display: flex; align-items: center; gap: 7px; text-decoration: none;
-    padding: 4px 9px 4px 4px; border: 1px solid #2c3237; border-radius: 9px;
-    background: #1a1f23; transition: border-color .15s, background .15s;
+  /* 오늘 뭐먹지? — 팀 프로젝트로 넘어가는 주 동선이라 헤더에서 가장 눈에 띄게 둔다 */
+  .eatbtn {
+    position: relative; overflow: hidden;
+    display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+    height: 40px; padding: 0 15px; border-radius: var(--r-m);
+    background: var(--eat); color: #fff;
+    border: 1px solid rgba(255,255,255,.22);
+    box-shadow: 0 3px 14px rgba(244,99,44,.38);
+    transition: transform .12s, box-shadow .15s;
   }
-  .applink:hover { background: #232a2f; border-color: #3d454b; }
-  .applink .ico {
-    width: 28px; height: 28px; border-radius: 7px; flex: 0 0 auto;
-    background: linear-gradient(140deg, #ff8a3d, #f4632c);
-    display: flex; align-items: center; justify-content: center; font-size: 15px;
+  .eatbtn:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(244,99,44,.5); }
+  .eatbtn:active { transform: translateY(0); }
+  .eatbtn .ico { font-size: 18px; line-height: 1; }
+  .eatbtn .lbl { font-size: 14.5px; font-weight: 800; letter-spacing: -0.05em; white-space: nowrap; }
+  .eatbtn .arw { font-size: 12px; opacity: .8; font-weight: 800; }
+  /* 지나가는 광 — 버튼이 살아 있다는 신호 */
+  .eatbtn::after {
+    content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.38), transparent);
+    animation: shine 3.6s ease-in-out infinite;
   }
-  .applink .lbl {
-    font-size: 10.5px; font-weight: 700; color: #b9c0c6;
-    letter-spacing: -0.05em; line-height: 1.2; white-space: nowrap;
-  }
-  @media (max-width: 620px) {
-    .applink .lbl { display: none; }
-    .applink { padding: 4px; }
+  @keyframes shine { 0%, 62% { left: -60%; } 88%, 100% { left: 120%; } }
+  @media (max-width: 560px) {
+    .eatbtn { height: 38px; padding: 0 12px; gap: 6px; }
+    .eatbtn .lbl { font-size: 13.5px; }
+    .eatbtn .arw { display: none; }
   }
 
   .season { position: relative; flex: 0 0 auto; }
   .season select {
     appearance: none; -webkit-appearance: none;
     font-family: inherit; font-size: 13px; font-weight: 700; color: #e8eaec;
-    background: #1a1f23; border: 1px solid #2c3237; border-radius: 8px;
-    padding: 8px 30px 8px 12px; cursor: pointer; letter-spacing: -0.02em;
+    background: var(--dark-2); border: 1px solid var(--dark-line); border-radius: var(--r-m);
+    height: 40px; padding: 0 30px 0 12px; cursor: pointer; letter-spacing: var(--ls);
+  }
+  @media (max-width: 560px) {
+    .season select { height: 38px; font-size: 12.5px; padding: 0 26px 0 10px; }
+    .season::after { right: 10px !important; }
   }
   .season::after {
     content: ''; position: absolute; right: 12px; top: 50%; margin-top: -2px; pointer-events: none;
@@ -97,8 +124,8 @@
   .cams { display: flex; gap: 4px; flex: 0 0 auto; padding: 6px 0; }
   .cam {
     font-family: inherit; font-size: 11.5px; font-weight: 700; letter-spacing: -0.04em;
-    color: #9aa1a7; background: #1a1f23; border: 1px solid #2c3237; border-radius: 7px;
-    padding: 6px 10px; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s;
+    color: #9aa1a7; background: var(--dark-2); border: 1px solid var(--dark-line); border-radius: var(--r-pill);
+    padding: 7px 13px; cursor: pointer; white-space: nowrap; transition: background .15s, color .15s;
   }
   .cam:hover { color: #fff; }
   .cam.on { background: var(--green-l); border-color: var(--green-l); color: #fff; }
@@ -109,28 +136,76 @@
     .cams { padding: 0 0 8px; }
   }
 
-  /* 시즌 상태 띠 */
-  .hero { background: #fff; border-bottom: 1px solid var(--line); }
-  .hero .inner {
-    max-width: 1060px; margin: 0 auto; padding: 13px 16px;
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  /* ── 상단 빌보드: "여긴 교내 축구 리그다"를 한눈에 ── */
+  .bb { position: relative; overflow: hidden; background: #0b0e10; color: #fff; }
+  .bb::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(104deg, rgba(255,255,255,.035) 0 46px, transparent 46px 92px),
+      radial-gradient(120% 160% at 12% -30%, rgba(18,138,75,.62), transparent 62%),
+      radial-gradient(90% 130% at 102% 0%, rgba(255,212,0,.15), transparent 58%);
   }
-  .hero .state {
+  .bb::after {   /* 아래쪽 잔디 라인 */
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px;
+    background: linear-gradient(90deg, var(--green-n), var(--gold) 55%, var(--green-n));
+  }
+  .bb-in { position: relative; max-width: 1060px; margin: 0 auto; padding: 26px 16px 22px; }
+  .bb-kick {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; font-weight: 800; letter-spacing: .11em;
+    color: #7ff0b0; background: rgba(52,209,122,.13);
+    border: 1px solid rgba(52,209,122,.34); padding: 5px 11px; border-radius: var(--r-pill);
+  }
+  .bb-title {
+    margin-top: 12px; display: flex; align-items: center; gap: 11px; flex-wrap: wrap;
+    font-size: 38px; font-weight: 900; letter-spacing: -0.05em; line-height: 1.02;
+  }
+  .bb-title em {
+    font-style: normal;
+    background: linear-gradient(92deg, #ffffff 12%, #7cf0ae 52%, var(--gold) 96%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .bb-title .ball { font-size: 32px; animation: kick 3.2s ease-in-out infinite; }
+  @keyframes kick {
+    0%, 70%, 100% { transform: translateY(0) rotate(0); }
+    78% { transform: translateY(-10px) rotate(-18deg); }
+    86% { transform: translateY(-3px) rotate(9deg); }
+  }
+  .bb-tag {
+    font-size: 12.5px; font-weight: 800; letter-spacing: -0.02em; color: #0b0e10;
+    background: var(--gold); border-radius: var(--r-s); padding: 5px 9px; align-self: center;
+  }
+  .bb-sub { margin-top: 9px; font-size: 14px; color: #b6c0c6; letter-spacing: var(--ls); }
+  .bb-sub b { color: #e8eaec; font-weight: 700; }
+  .bb-stats { margin-top: 15px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .bb .state {
     font-size: 11.5px; font-weight: 800; letter-spacing: -0.02em;
-    color: #0b6b3a; background: #e8f5ee; border-radius: 20px; padding: 4px 10px;
+    color: #0b0e10; background: var(--green-n); border-radius: var(--r-pill); padding: 5px 11px;
   }
-  .hero .meta { font-size: 12.5px; color: var(--gray-d); letter-spacing: -0.03em; }
-  .hero .meta b { color: var(--ink); font-weight: 700; }
-  .hero .dot { color: #cdcdd6; margin: 0 5px; }
+  .bb .meta { font-size: 12.5px; color: #9aa1a7; letter-spacing: var(--ls); }
+  .bb .meta b { color: #fff; font-weight: 800; }
+  .bb .dot { color: #4d555b; margin: 0 5px; }
   .notice {
-    display: none; width: 100%; font-size: 12.5px; color: #8a6d14;
-    background: #fdf8e8; border: 1px solid #f0e0a8; border-radius: 8px; padding: 8px 11px;
-    letter-spacing: -0.03em;
+    display: none; width: 100%; font-size: 12.5px; color: #f0dfa8;
+    background: rgba(255,212,0,.09); border: 1px solid rgba(255,212,0,.28);
+    border-radius: var(--r-s); padding: 9px 12px; letter-spacing: var(--ls);
   }
   .notice.show { display: block; }
+  .notice b { color: #fff; }
+  @media (max-width: 640px) {
+    .bb-in { padding: 20px 14px 18px; }
+    .bb-title { font-size: 28px; gap: 8px; margin-top: 10px; }
+    .bb-title .ball { font-size: 24px; }
+    .bb-tag { font-size: 11px; padding: 4px 8px; }
+    .bb-sub { font-size: 12.5px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bb-title .ball { animation: none; }
+    .eatbtn::after { animation: none; }
+  }
 
   /* ── 공통 ── */
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
   h2 {
     font-size: 13px; font-weight: 700; color: var(--gray-d);
     letter-spacing: -0.01em; margin: 0 0 9px 2px;
@@ -148,7 +223,7 @@
   /* ── 우승 카드 ── */
   .champ {
     background: #fff; border: 1px solid var(--line); border-left: 4px solid #d8a72a;
-    border-radius: 12px; padding: 17px 19px;
+    border-radius: var(--r-l); padding: 17px 19px;
     display: flex; align-items: center; gap: 14px;
   }
   .champ .clogo {
@@ -164,7 +239,7 @@
   /* ── 탭 ── */
   .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
   .tab {
-    flex: 1; padding: 10px 4px; border: 1px solid var(--line); border-radius: 9px;
+    flex: 1; padding: 10px 4px; border: 1px solid var(--line); border-radius: var(--r-m);
     font-family: inherit; font-size: 14.5px; font-weight: 700;
     background: #fff; color: var(--gray); cursor: pointer;
     transition: background .15s, color .15s, border-color .15s;
@@ -209,7 +284,7 @@
   .r4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 
   .g {
-    border: 1px solid var(--line); border-radius: 10px; overflow: hidden;
+    border: 1px solid var(--line); border-radius: var(--r-m); overflow: hidden;
     background: #fff; min-width: 0;
   }
   .g.final {
@@ -239,7 +314,7 @@
 
   /* 부전승 슬롯 */
   .bye {
-    border: 1px dashed #d5d5de; border-radius: 10px; background: #fafafc;
+    border: 1px dashed #d5d5de; border-radius: var(--r-m); background: #fafafc;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 3px; padding: 9px 6px; min-width: 0;
   }
@@ -256,11 +331,11 @@
   .third {
     display: flex; align-items: center; justify-content: center; gap: 10px;
     margin-top: 14px; padding: 10px 11px; background: #fafafc;
-    border: 1px solid var(--line); border-radius: 9px;
+    border: 1px solid var(--line); border-radius: var(--r-m);
     font-size: 13px; color: var(--gray-d); letter-spacing: -0.03em;
   }
   .third .tag { font-size: 10px; font-weight: 800; color: var(--gray); letter-spacing: .07em;
-                background: #eceef2; padding: 3px 8px; border-radius: 20px; }
+                background: #eceef2; padding: 3px 8px; border-radius: var(--r-pill); }
   .third b { color: var(--ink); font-weight: 700; }
 
   /* ── 예정 시즌(TBD) ── */
@@ -283,7 +358,7 @@
   }
   .r-hd .n {
     background: var(--green); color: #fff; font-size: 11.5px; font-weight: 800;
-    padding: 3px 9px; border-radius: 20px; letter-spacing: .02em;
+    padding: 3px 9px; border-radius: var(--r-pill); letter-spacing: .02em;
   }
   .r-hd .n.ko { background: #b8901c; }
   .r-hd .t { font-size: 12.5px; color: var(--gray); }
@@ -299,7 +374,7 @@
   .sfil { display: flex; gap: 6px; overflow-x: auto; padding: 1px 1px 12px; scrollbar-width: thin; }
   .sfil button {
     flex: 0 0 auto; font-family: inherit; font-size: 12.5px; font-weight: 700; letter-spacing: -0.03em;
-    padding: 7px 13px; border-radius: 20px; border: 1px solid var(--line);
+    padding: 7px 13px; border-radius: var(--r-pill); border: 1px solid var(--line);
     background: #fff; color: var(--gray); cursor: pointer; white-space: nowrap;
     transition: background .15s, color .15s, border-color .15s;
   }
@@ -318,7 +393,7 @@
   .match .w { color: var(--ink); font-weight: 700; }
   .match .sc {
     font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13.5px;
-    padding: 3px 10px; margin: 0 10px; border-radius: 6px;
+    padding: 3px 10px; margin: 0 10px; border-radius: var(--r-s);
     background: #f2f3f6; color: var(--ink); white-space: nowrap;
   }
   .mwrap.mine .match .home, .mwrap.mine .match .away { color: var(--gray-d); }
@@ -329,11 +404,34 @@
   .mwrap { cursor: pointer; }
   .mwrap:hover { background: #fbfbfd; }
   .mwrap.mine:hover { background: #fff6c9; }
+  /* 응원이 접혀 있는 걸 아무도 모르던 문제 → 눌러야 할 곳을 버튼으로 명확히 */
   .mmore {
-    text-align: center; font-size: 10.5px; color: #b0b0b8;
-    margin-top: 6px; letter-spacing: -0.03em;
+    display: block; width: max-content; margin: 8px auto 2px;
+    font-size: 12px; font-weight: 800; letter-spacing: -0.04em;
+    color: var(--green); background: #edfaf2; border: 1px solid #cbeeda;
+    border-radius: var(--r-pill); padding: 6px 14px;
+    transition: background .15s, color .15s;
   }
-  .mwrap.open .mmore { color: var(--green); font-weight: 700; }
+  .mwrap:hover .mmore { background: var(--green); border-color: var(--green); color: #fff; }
+  .mwrap.open .mmore { background: #f2f3f6; border-color: var(--line); color: var(--gray-d); }
+  /* 아직 한 번도 응원해 본 적 없는 사람에게는 첫 경기 버튼이 스스로 손짓하게 */
+  .mwrap.nudge .mmore { animation: nudge 2.2s ease-out infinite; }
+  @keyframes nudge {
+    0%   { box-shadow: 0 0 0 0 rgba(18,138,75,.42); }
+    55%  { box-shadow: 0 0 0 10px rgba(18,138,75,0); }
+    100% { box-shadow: 0 0 0 0 rgba(18,138,75,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .mwrap.nudge .mmore { animation: none; } }
+
+  /* 경기 목록 위 안내 */
+  .cheerhint {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: #1c6a41; letter-spacing: var(--ls);
+    background: #edfaf2; border: 1px solid #cbeeda; border-radius: var(--r-m);
+    padding: 10px 13px; margin-bottom: 11px;
+  }
+  .cheerhint .em { font-size: 15px; }
+  .cheerhint b { font-weight: 800; color: #0b6b3a; }
 
   .mdet { display: none; margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 11px; cursor: default; }
   .mwrap.open .mdet { display: block; }
@@ -352,7 +450,7 @@
   .cheer { position: relative; display: flex; gap: 6px; align-items: stretch; }
   .cb {
     position: relative; flex: 1 1 0; min-width: 27%;
-    border: none; border-radius: 12px; cursor: pointer; font-family: inherit;
+    border: none; border-radius: var(--r-l); cursor: pointer; font-family: inherit;
     padding: 11px 13px; display: flex; align-items: center; gap: 9px;
     transition: flex-grow .4s cubic-bezier(.2,.7,.3,1), filter .12s;
   }
@@ -366,11 +464,14 @@
   .cb .cn { font-size: 17px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
   .cheer .badge {
     position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
-    background: #fff; border-radius: 20px; font-size: 10.5px; font-weight: 800;
+    background: #fff; border-radius: var(--r-pill); font-size: 10.5px; font-weight: 800;
     color: var(--gray-d); padding: 4px 10px; box-shadow: 0 1px 5px rgba(0,0,0,.13);
     pointer-events: none; white-space: nowrap;
   }
-  .chint { font-size: 10.5px; color: #b8b8c0; text-align: center; margin-top: 7px; letter-spacing: -0.03em; }
+  .cb .hand { margin-left: auto; font-size: 14px; opacity: .55; }
+  .cb.a .hand { margin-left: 0; margin-right: auto; }
+  .chint { font-size: 11px; color: #9a9aa4; text-align: center; margin-top: 8px; letter-spacing: var(--ls); }
+  .dsec.cheer-hd { color: var(--green); font-size: 10.5px; }
 
   .pop { position: absolute; pointer-events: none; font-size: 19px; animation: rise .9s ease-out forwards; }
   @keyframes rise {
@@ -402,7 +503,7 @@
 
   /* ── 내 팀 선택 바 ── */
   .mybar {
-    background: #fff; border: 1px solid var(--line); border-radius: 12px;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--r-l);
     padding: 12px 0 11px; margin-top: 18px;
   }
   .mybar .cap {
@@ -433,7 +534,7 @@
   .myctl {
     display: none; align-items: center; justify-content: space-between; gap: 10px;
     margin: 11px 14px 0; padding: 10px 12px;
-    background: #fffdf0; border: 1px solid #f2e08a; border-radius: 9px;
+    background: #fffdf0; border: 1px solid #f2e08a; border-radius: var(--r-m);
   }
   .myctl.show { display: flex; }
   .myctl .txt { font-size: 12.5px; color: #6b5d1e; letter-spacing: -0.02em; }
@@ -441,7 +542,7 @@
   .myctl .btns { display: flex; gap: 6px; flex: 0 0 auto; }
   .myctl button {
     font-family: inherit; font-size: 12px; font-weight: 700; cursor: pointer;
-    padding: 7px 11px; border-radius: 7px; border: 1px solid #e3d47a;
+    padding: 7px 11px; border-radius: var(--r-s); border: 1px solid #e3d47a;
     background: #fff; color: #6b5d1e; white-space: nowrap;
   }
   .myctl button.on { background: #ffd400; border-color: #ffd400; color: #33300f; }
@@ -461,7 +562,7 @@
 
   /* ── 다음 시즌 ── */
   .next {
-    background: #fff; border: 1px dashed #ccccd6; border-radius: 12px;
+    background: #fff; border: 1px dashed #ccccd6; border-radius: var(--r-l);
     padding: 20px; text-align: center; margin-top: 22px;
   }
   .next .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; vertical-align: middle; }
@@ -469,6 +570,43 @@
   .next p { font-size: 13.5px; color: var(--gray-d); line-height: 1.7; }
 
   footer { text-align: center; font-size: 11.5px; color: #a3a3ac; margin-top: 26px; line-height: 1.75; }
+
+  /* ── 오늘 뭐먹지? 팝업 ── */
+  .eatpop {
+    position: fixed; inset: 0; z-index: 200; padding: 20px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(10,12,14,.56); -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none; transition: opacity .22s ease;
+  }
+  .eatpop.show { opacity: 1; pointer-events: auto; }
+  .eatcard {
+    position: relative; width: 100%; max-width: 340px; background: #fff;
+    border-radius: 20px; overflow: hidden; text-align: center;
+    box-shadow: 0 20px 54px rgba(0,0,0,.32);
+    transform: translateY(16px) scale(.96); transition: transform .26s cubic-bezier(.2,.8,.3,1);
+  }
+  .eatpop.show .eatcard { transform: none; }
+  .eatcard .top { background: var(--eat); color: #fff; padding: 24px 20px 20px; }
+  .eatcard .top .em { font-size: 42px; line-height: 1; }
+  .eatcard .top h3 { font-size: 20px; font-weight: 800; letter-spacing: -0.05em; margin-top: 8px; }
+  .eatcard .body { padding: 17px 20px 20px; }
+  .eatcard .body p { font-size: 13.5px; color: var(--gray-d); line-height: 1.7; letter-spacing: var(--ls); }
+  .eatcard .body p b { color: var(--ink); font-weight: 800; }
+  .eatbtns { display: flex; gap: 8px; margin-top: 16px; }
+  .eatbtns a, .eatbtns button {
+    flex: 1; font-family: inherit; font-size: 14px; font-weight: 800; letter-spacing: -0.04em;
+    padding: 13px 10px; border-radius: var(--r-m); cursor: pointer; text-decoration: none;
+    border: 1px solid var(--line); white-space: nowrap;
+  }
+  .eatbtns .go { background: var(--eat); color: #fff; border-color: transparent;
+                 box-shadow: 0 3px 12px rgba(244,99,44,.34); }
+  .eatbtns .no { flex: 0 0 auto; padding: 13px 18px; background: #fff; color: var(--gray); }
+  .eatx {
+    position: absolute; top: 10px; right: 10px; width: 30px; height: 30px;
+    border: none; border-radius: 50%; background: rgba(255,255,255,.22); color: #fff;
+    font-size: 17px; font-family: inherit; cursor: pointer; line-height: 1;
+  }
+  .eatx:hover { background: rgba(255,255,255,.35); }
 </style>
 </head>
 <body>
@@ -479,15 +617,16 @@
     <div class="hright">
       <div class="season">
         <select id="season" aria-label="시즌 선택">
-          <option value="26-1" selected>2026학년도 1학기</option>
-          <option value="26-2">2026학년도 2학기</option>
+          <option value="26-1" selected>2026 1학기</option>
+          <option value="26-2">2026 2학기</option>
         </select>
       </div>
-      <a class="applink" id="applink" target="_blank" rel="noopener"
+      <a class="eatbtn" id="applink" target="_blank" rel="noopener"
          href="https://ellychen23.github.io/today-eat.github.io/"
-         title="오늘 뭐먹지? — 랜덤 메뉴 추천">
+         title="오늘 뭐먹지? — 메뉴 추천받기">
         <span class="ico">🍴</span>
-        <span class="lbl">오늘<br>뭐먹지?</span>
+        <span class="lbl">오늘 뭐먹지?</span>
+        <span class="arw">›</span>
       </a>
     </div>
   </div>
@@ -496,7 +635,7 @@
       <div class="links">
         <a href="#sec-table" class="on">순위</a>
         <a href="#sec-playoff">토너먼트</a>
-        <a href="#sec-league">경기 결과</a>
+        <a href="#sec-league">경기 결과 · 응원</a>
       </div>
       <div class="cams" id="cams">
         <button class="cam on" data-c="nsc">자연과학캠퍼스</button>
@@ -506,11 +645,21 @@
   </div>
 </header>
 
-<div class="hero">
-  <div class="inner">
-    <span class="state" id="hstate">시즌 종료</span>
-    <span class="meta" id="hmeta"></span>
-    <div class="notice" id="notice"></div>
+<div class="bb">
+  <div class="bb-in">
+    <span class="bb-kick" id="bbKick">성균관대학교 자연과학캠퍼스</span>
+    <h1 class="bb-title">
+      <span class="ball">⚽</span><em id="bbLeague">S리그</em>
+      <span class="bb-tag" id="bbTag">교내 축구 리그</span>
+    </h1>
+    <p class="bb-sub" id="bbSub">
+      조별 순위 · 토너먼트 대진 · <b>전 경기 결과</b> · 👏 응원까지 한 곳에서
+    </p>
+    <div class="bb-stats">
+      <span class="state" id="hstate">시즌 종료</span>
+      <span class="meta" id="hmeta"></span>
+      <div class="notice" id="notice"></div>
+    </div>
   </div>
 </div>
 
@@ -558,6 +707,10 @@
   <!-- 아래: 리그전 -->
   <section id="sec-league" style="margin-top:26px">
     <h2 id="fixTitle">조별 리그전 · 라운드별 결과</h2>
+    <div class="cheerhint">
+      <span class="em">👏</span>
+      <span>경기를 누르면 <b>득점 기록</b>과 <b>응원하기</b>가 열립니다 · 우리 팀 로고를 눌러 응원해 주세요</span>
+    </div>
     <div class="sfil" id="sfil"></div>
     <div id="rounds"></div>
   </section>
@@ -573,6 +726,25 @@
     기계공학부 축구동아리 MES 제작<br>
     자연과학캠퍼스 S리그 · 인문사회캠퍼스 성축배 기록 · 경기 결과 정정·문의는 각 팀 임원진에게 전달해 주세요.
   </footer>
+</div>
+
+<!-- 오늘 뭐먹지? 팝업 (시간 경과 · 캠퍼스 전환 시) -->
+<div class="eatpop" id="eatpop" role="dialog" aria-modal="true" aria-labelledby="eatTitle">
+  <div class="eatcard">
+    <button class="eatx" id="eatx" aria-label="닫기">✕</button>
+    <div class="top">
+      <div class="em">🍴</div>
+      <h3 id="eatTitle">오늘 뭐먹지?</h3>
+    </div>
+    <div class="body">
+      <p id="eatMsg"></p>
+      <div class="eatbtns">
+        <a class="go" id="eatGo" target="_blank" rel="noopener"
+           href="https://ellychen23.github.io/today-eat.github.io/">메뉴 추천받기 →</a>
+        <button class="no" id="eatNo">닫기</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -767,6 +939,8 @@ const HSS_BRACKET_TBD = {
 const DATA = {
   nsc: {
     short:'자연과학캠퍼스', badge:'자연과학캠퍼스', brand:'S-LEAGUE', league:'S리그',
+    tag:'교내 축구 리그',
+    sub:'12개 팀이 한 학기 동안 겨루는 자연과학캠퍼스 축구 리그<span class="dot">·</span>순위 · 대진 · <b>전 경기 결과</b> · 👏 응원',
     fixTitle:'조별 리그전 · 라운드별 결과', brTitle:'플레이오프 대진',
     docTitle:'S리그 | 성균관대 자연과학캠퍼스 축구 리그',
     logos: {
@@ -802,6 +976,8 @@ const DATA = {
 
   hss: {
     short:'인문사회캠퍼스', badge:'인문사회캠퍼스', brand:'성축배', league:'성축배',
+    tag:'교내 축구 대회',
+    sub:'15개 팀이 맞붙는 인문사회캠퍼스 축구 대회<span class="dot">·</span>조별 순위 · 토너먼트 · <b>전 경기 결과</b> · 👏 응원',
     fixTitle:'조별 리그전 · 토너먼트 전 경기', brTitle:'토너먼트 대진',
     docTitle:'성축배 | 성균관대 인문사회캠퍼스 축구 대회',
     logos: {
@@ -979,6 +1155,10 @@ const SUPA = {
 const SUPA_ON = () => !!(SUPA.url && SUPA.key);
 
 const CHEER_KEY = 'sl_cheer_v1';
+/* 응원 기능을 아직 한 번도 안 써 본 사람인가 — 첫 경기 버튼을 깜빡여 알려주기 위해 */
+const CHEERED_KEY = 'sl_cheered_v1';
+let CHEERED = false;
+try { CHEERED = localStorage.getItem(CHEERED_KEY) === '1'; } catch (e) {}
 let CHEER = {};
 if (!SUPA_ON()) {
   try { CHEER = JSON.parse(localStorage.getItem(CHEER_KEY) || '{}'); } catch (e) { CHEER = {}; }
@@ -1046,18 +1226,26 @@ function matchDetail(id, h, a, meta) {
     : '<div class="nogoal">등록된 득점 기록이 없습니다</div>';
   return '<div class="mdet">' +
     '<div class="dsec">득점</div>' + goals +
-    '<div class="dsec">응원</div>' +
+    '<div class="dsec cheer-hd">👏 응원하기 — 팀을 눌러 응원</div>' +
     '<div class="cheer">' +
       '<button class="cb h" data-side="h" style="flex-grow:' + grow(c.h, tot) + '">' +
-        barLogo(h) + '<span class="cn">' + c.h.toLocaleString() + '</span></button>' +
+        barLogo(h) + '<span class="cn">' + c.h.toLocaleString() + '</span>' +
+        '<span class="hand">👏</span></button>' +
       '<button class="cb a" data-side="a" style="flex-grow:' + grow(c.a, tot) + '">' +
-        barLogo(a) + '<span class="cn">' + c.a.toLocaleString() + '</span></button>' +
+        barLogo(a) + '<span class="cn">' + c.a.toLocaleString() + '</span>' +
+        '<span class="hand">👏</span></button>' +
       '<span class="badge">종료</span>' +
     '</div>' +
     '<div class="chint">' + (SUPA_ON()
-      ? '누르는 만큼 올라갑니다 · 모두의 응원이 합산됩니다'
-      : '누르는 만큼 올라갑니다 · 응원 수는 이 기기에 저장됩니다') + '</div>' +
+      ? '연타할수록 올라갑니다 · 모두의 응원이 합산됩니다'
+      : '연타할수록 올라갑니다 · 응원 수는 이 기기에 저장됩니다') + '</div>' +
   '</div>';
+}
+
+/* 접힌 상태에서도 응원이 있다는 걸 알 수 있게 버튼 라벨에 응원 수를 얹는다 */
+function moreLabel(id) {
+  const c = cheerOf(id), tot = c.h + c.a;
+  return tot ? '👏 응원 ' + tot.toLocaleString() + ' · 기록 보기' : '👏 응원하기 · 기록 보기';
 }
 
 function matchRow(m) {
@@ -1075,7 +1263,7 @@ function matchRow(m) {
       '<span class="sc">' + hs + ' : ' + as_ + '</span>' +
       '<span class="away' + (as_ > hs ? ' w' : '') + '">' + a + '</span>' +
     '</div>' +
-    '<div class="mmore">기록 · 응원 ▾</div>' +
+    '<div class="mmore" data-lbl="' + moreLabel(id) + '">' + moreLabel(id) + '</div>' +
     matchDetail(id, h, a, meta) +
   '</div>';
 }
@@ -1121,6 +1309,10 @@ document.getElementById('rounds').addEventListener('click', e => {
     c[side]++;                                  // 화면은 먼저 올리고
     if (SUPA_ON()) queueServer(id, side, 1);    // 서버 반영은 뒤따라간다
     else { try { localStorage.setItem(CHEER_KEY, JSON.stringify(CHEER)); } catch (err) {} }
+    try { localStorage.setItem(CHEERED_KEY, '1'); } catch (err) {}
+    CHEERED = true;
+    document.querySelectorAll('.mwrap.nudge').forEach(w => w.classList.remove('nudge'));
+    wrap.querySelector('.mmore').dataset.lbl = moreLabel(id);   // 접었을 때 보일 라벨 갱신
     paintCheer(wrap);
     popThumb(btn.parentNode, e);
     queueCheerEvent(id, wrap.dataset[side === 'h' ? 'th' : 'ta']);
@@ -1130,7 +1322,9 @@ document.getElementById('rounds').addEventListener('click', e => {
   const wrap = e.target.closest('.mwrap');
   if (!wrap) return;
   const open = wrap.classList.toggle('open');
-  wrap.querySelector('.mmore').textContent = open ? '접기 ▴' : '기록 · 응원 ▾';
+  const more = wrap.querySelector('.mmore');
+  more.textContent = open ? '접기 ▴' : more.dataset.lbl;
+  wrap.classList.remove('nudge');
   if (open) gtag('event', 'match_open', { campus: CAMPUS, match: wrap.dataset.id });
 });
 
@@ -1191,6 +1385,12 @@ function renderRounds() {
       '<span class="t">' + cnt + '</span></div>' +
       '<div class="r-body' + (two ? ' two' : '') + '">' + body + '</div></div>';
   }).join('');
+
+  // 응원을 써 본 적 없으면 첫 경기 카드의 버튼이 스스로 눈에 띄게
+  if (!CHEERED) {
+    const first = box.querySelector('.mwrap');
+    if (first) first.classList.add('nudge');
+  }
 }
 
 function renderChips() {
@@ -1233,6 +1433,10 @@ function renderHeader() {
   const c = C(), s = S();
   document.getElementById('brandName').textContent = c.brand;
   document.getElementById('brandBadge').textContent = c.badge;
+  document.getElementById('bbKick').textContent = '성균관대학교 ' + c.short;
+  document.getElementById('bbLeague').textContent = c.league;
+  document.getElementById('bbTag').textContent = c.tag;
+  document.getElementById('bbSub').innerHTML = c.sub;
   document.getElementById('fixTitle').textContent = c.fixTitle;
   document.getElementById('brTitle').textContent = c.brTitle;
   document.title = c.docTitle;
@@ -1300,7 +1504,11 @@ function setCampus(c, fire) {
   renderChips();
   refresh();
   // KPI: 어느 캠퍼스 사람들이 들어오는가 — 확장 가치 판단 근거
-  if (fire) gtag('event', 'campus_select', { campus: c });
+  if (fire) {
+    gtag('event', 'campus_select', { campus: c });
+    // 캠퍼스를 옮기는 순간 = "그 동네에서 뭐 먹지"가 자연스러운 타이밍
+    setTimeout(() => showEat('campus'), 900);
+  }
 }
 document.querySelectorAll('.cam').forEach(b => {
   b.addEventListener('click', () => setCampus(b.dataset.c, true));
@@ -1317,8 +1525,67 @@ document.getElementById('season').addEventListener('change', e => {
 
 /* ═══════════ 팀 프로젝트 링크 ═══════════ */
 document.getElementById('applink').addEventListener('click', () => {
-  gtag('event', 'outbound_click', { target: 'today-eat' });
+  gtag('event', 'outbound_click', { target: 'today-eat', from: 'header' });
 });
+
+/* ═══════════ 오늘 뭐먹지? 팝업 ═══════════
+   기준: 하루 최대 2번 · 팝업끼리 최소 90초 간격 · 한 번 눌러서 넘어간 날은 더 안 띄운다.
+   트리거 ① 40초 체류  ② 캠퍼스 전환  ③ 3분 체류(①·②로 2번을 못 채웠을 때) */
+const EAT_KEY = 'sl_eat_pop_v2';
+const EAT_MAX = 2, EAT_GAP = 90 * 1000;
+const eatPop = document.getElementById('eatpop');
+let eatLast = 0, eatTrigger = '';
+
+const eatToday = () => new Date().toDateString();
+function eatState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(EAT_KEY) || '{}');
+    if (s.d === eatToday()) return s;
+  } catch (e) {}
+  return { d: eatToday(), n: 0, go: 0 };
+}
+function eatSave(s) { try { localStorage.setItem(EAT_KEY, JSON.stringify(s)); } catch (e) {} }
+
+const EAT_MSG = {
+  time: () => '경기 보다 보니 <b>배고파지지 않으셨나요?</b><br>' +
+              '메뉴 고민되면 저희가 대신 골라드릴게요.',
+  time2: () => '아직 점심(저녁) 안 정하셨죠?<br>' +
+               '<b>버튼 한 번</b>이면 오늘 먹을 메뉴가 정해집니다.',
+  campus: () => '<b>' + C().short + '</b>으로 넘어오셨네요!<br>' +
+                '그 근처에서 뭐 먹을지 고민이라면 — 메뉴 추천해 드릴게요.'
+};
+
+function showEat(trigger) {
+  const s = eatState();
+  if (s.go || s.n >= EAT_MAX) return;                 // 이미 넘어갔거나 오늘 할당량 끝
+  if (eatPop.classList.contains('show')) return;      // 이미 떠 있으면 겹치지 않게
+  if (Date.now() - eatLast < EAT_GAP) return;         // 너무 붙어서 뜨지 않게
+  eatTrigger = trigger;
+  eatLast = Date.now();
+  document.getElementById('eatMsg').innerHTML = EAT_MSG[trigger]();
+  eatPop.classList.add('show');
+  s.n++; s.d = eatToday(); eatSave(s);
+  gtag('event', 'eat_popup_show', { trigger: trigger, campus: CAMPUS, count: s.n });
+}
+function hideEat(how) {
+  if (!eatPop.classList.contains('show')) return;
+  eatPop.classList.remove('show');
+  gtag('event', 'eat_popup_close', { trigger: eatTrigger, how: how });
+}
+
+document.getElementById('eatNo').addEventListener('click', () => hideEat('button'));
+document.getElementById('eatx').addEventListener('click', () => hideEat('x'));
+eatPop.addEventListener('click', e => { if (e.target === eatPop) hideEat('backdrop'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideEat('esc'); });
+document.getElementById('eatGo').addEventListener('click', () => {
+  const s = eatState(); s.go = 1; eatSave(s);         // 넘어간 사람에겐 오늘 더 안 띄운다
+  gtag('event', 'eat_popup_go', { trigger: eatTrigger, campus: CAMPUS });
+  gtag('event', 'outbound_click', { target: 'today-eat', from: 'popup' });
+  eatPop.classList.remove('show');
+});
+
+setTimeout(() => showEat('time'), 40 * 1000);
+setTimeout(() => showEat('time2'), 180 * 1000);
 
 /* ═══════════ 초기화 ═══════════ */
 setCampus(CAMPUS, false);
