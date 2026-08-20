@@ -437,14 +437,15 @@
   .mwrap.mine { background: #fff9d6; }
   .mtop { font-size: 10.5px; color: var(--gray); text-align: center; letter-spacing: -0.02em; margin-bottom: 4px; }
   .mtop .pf { color: var(--green); font-weight: 700; }
-  .match { display: flex; align-items: center; font-size: 14px; letter-spacing: -0.03em; }
-  .match .home { flex: 1; text-align: right; color: var(--gray); min-width: 0; }
-  .match .away { flex: 1; text-align: left; color: var(--gray); min-width: 0; }
-  .match .w { color: var(--ink); font-weight: 700; }
+  /* 결과가 카드에서 가장 먼저 읽히도록 팀명·점수를 키운다 */
+  .match { display: flex; align-items: center; font-size: 15px; letter-spacing: -0.03em; }
+  .match .home { flex: 1; text-align: right; color: var(--gray-d); font-weight: 600; min-width: 0; }
+  .match .away { flex: 1; text-align: left; color: var(--gray-d); font-weight: 600; min-width: 0; }
+  .match .w { color: var(--ink); font-weight: 800; }
   .match .sc {
-    font-weight: 800; font-variant-numeric: tabular-nums; font-size: 13.5px;
-    padding: 3px 10px; margin: 0 10px; border-radius: var(--r-s);
-    background: #f2f3f6; color: var(--ink); white-space: nowrap;
+    font-weight: 800; font-variant-numeric: tabular-nums; font-size: 17px;
+    padding: 4px 12px; margin: 0 10px; border-radius: var(--r-s);
+    background: #eceef3; color: var(--ink); white-space: nowrap;
   }
   .mwrap.mine .match .home, .mwrap.mine .match .away { color: var(--gray-d); }
   .mwrap.mine .match .w { color: #16161a; }
@@ -454,34 +455,33 @@
   .mwrap { cursor: pointer; }
   .mwrap:hover { background: #fbfbfd; }
   .mwrap.mine:hover { background: #fff6c9; }
-  /* 응원이 접혀 있는 걸 아무도 모르던 문제 → 눌러야 할 곳을 버튼으로 명확히 */
+  /* 접혀 있다는 신호는 남기되, 점수보다 뒤로 물러서게 (초록 알약 → 조용한 보조 라벨) */
   .mmore {
-    display: block; width: max-content; margin: 8px auto 2px;
-    font-size: 12px; font-weight: 800; letter-spacing: -0.04em;
-    color: var(--green); background: #edfaf2; border: 1px solid #cbeeda;
-    border-radius: var(--r-pill); padding: 6px 14px;
-    transition: background .15s, color .15s;
+    display: block; width: max-content; margin: 5px auto 0;
+    font-size: 11px; font-weight: 600; letter-spacing: -0.03em;
+    color: #a0a0aa; background: none; border: 0;
+    border-radius: var(--r-pill); padding: 2px 6px;
+    transition: color .15s, background .15s;
   }
-  .mwrap:hover .mmore { background: var(--green); border-color: var(--green); color: #fff; }
-  .mwrap.open .mmore { background: #f2f3f6; border-color: var(--line); color: var(--gray-d); }
-  /* 아직 한 번도 응원해 본 적 없는 사람에게는 첫 경기 버튼이 스스로 손짓하게 */
-  .mwrap.nudge .mmore { animation: nudge 2.2s ease-out infinite; }
+  .mwrap:hover .mmore { background: #f2f3f6; color: var(--gray-d); }
+  .mwrap.open .mmore { color: var(--gray); }
+  /* 아직 한 번도 응원해 본 적 없는 사람에게만, 첫 경기에서 조용히 깜빡인다 */
+  .mwrap.nudge .mmore { color: var(--green); animation: nudge 2.6s ease-in-out infinite; }
   @keyframes nudge {
-    0%   { box-shadow: 0 0 0 0 rgba(18,138,75,.42); }
-    55%  { box-shadow: 0 0 0 10px rgba(18,138,75,0); }
-    100% { box-shadow: 0 0 0 0 rgba(18,138,75,0); }
+    0%, 100% { opacity: .55; }
+    50%      { opacity: 1; }
   }
   @media (prefers-reduced-motion: reduce) { .mwrap.nudge .mmore { animation: none; } }
 
-  /* 경기 목록 위 안내 */
+  /* 경기 목록 위 안내 — 결과를 가리지 않게 한 줄 캡션으로 */
   .cheerhint {
-    display: flex; align-items: center; gap: 8px;
-    font-size: 12.5px; color: #1c6a41; letter-spacing: var(--ls);
-    background: #edfaf2; border: 1px solid #cbeeda; border-radius: var(--r-m);
-    padding: 10px 13px; margin-bottom: 11px;
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: var(--gray); letter-spacing: var(--ls);
+    background: none; border: 0; padding: 0 2px;
+    margin: -2px 0 9px;
   }
-  .cheerhint .em { font-size: 15px; }
-  .cheerhint b { font-weight: 800; color: #0b6b3a; }
+  .cheerhint .em { font-size: 12.5px; }
+  .cheerhint b { font-weight: 700; color: var(--gray-d); }
 
   .mdet { display: none; margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 11px; cursor: default; }
   .mwrap.open .mdet { display: block; }
@@ -547,8 +547,8 @@
     .bye .t { font-size: 11px; }
     .bye .s { font-size: 8.5px; }
     .conn { height: 22px; }
-    .match { font-size: 13px; }
-    .match .sc { margin: 0 6px; padding: 3px 8px; }
+    .match { font-size: 14px; }
+    .match .sc { font-size: 16px; margin: 0 7px; padding: 3px 9px; }
   }
 
   /* ── 내 팀 선택 바 ── */
@@ -760,7 +760,7 @@
     <h2 id="fixTitle">조별 리그전 · 라운드별 결과</h2>
     <div class="cheerhint">
       <span class="em">👏</span>
-      <span>경기를 누르면 <b>득점 기록</b>과 <b>응원하기</b>가 열립니다 · 우리 팀 로고를 눌러 응원해 주세요</span>
+      <span>경기를 누르면 <b>득점 기록</b>과 <b>응원</b>이 열립니다</span>
     </div>
     <div class="sfil" id="sfil"></div>
     <div id="rounds"></div>
@@ -1295,10 +1295,10 @@ function matchDetail(id, h, a, meta) {
   '</div>';
 }
 
-/* 접힌 상태에서도 응원이 있다는 걸 알 수 있게 버튼 라벨에 응원 수를 얹는다 */
+/* 접힌 상태에서도 응원이 있다는 걸 알 수 있게 라벨에 응원 수를 얹는다 (점수를 가리지 않게 짧게) */
 function moreLabel(id) {
   const c = cheerOf(id), tot = c.h + c.a;
-  return tot ? '응원 ' + tot.toLocaleString() + ' · 경기 기록 보기' : '응원하기 · 경기 기록 보기';
+  return tot ? '기록 · 응원 ' + tot.toLocaleString() + ' ▾' : '기록 · 응원 ▾';
 }
 
 function matchRow(m) {
