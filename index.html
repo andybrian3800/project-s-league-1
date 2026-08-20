@@ -1562,9 +1562,9 @@ function setCampus(c, fire) {
   if (fire) {
     gtag('event', 'campus_select', { campus: c });
     // 캠퍼스를 옮기는 순간 = "그 동네에서 뭐 먹지"가 자연스러운 타이밍.
-    // 옮긴 화면을 10초쯤 둘러본 뒤에 띄운다.
-    clearTimeout(campusEatT);
-    campusEatT = setTimeout(() => showEat('campus'), 10 * 1000);
+    // 옮긴 화면을 10초쯤 둘러본 뒤에 띄우고, 1분 시계는 거기서 다시 감는다.
+    clearTimeout(campusEatT); clearTimeout(eatFirstT); clearInterval(eatCycleT);
+    campusEatT = setTimeout(() => { showEat('campus'); restartEatCycle(); }, 10 * 1000);
   }
 }
 document.querySelectorAll('.cam').forEach(b => {
@@ -1650,49 +1650,46 @@ document.getElementById('champ').addEventListener('click', function () {
 });
 
 /* ═══════════ 오늘 뭐먹지? 팝업 ═══════════
-   기준: 하루 최대 2번 · 팝업끼리 최소 20초 간격 · 한 번 눌러서 넘어간 날은 더 안 띄운다.
-   트리거 ① 입장 10초 후  ② 캠퍼스 전환 10초 후  ③ 3분 체류(①·②로 2번을 못 채웠을 때)
-   간격을 90초로 두면 입장 팝업 직후의 캠퍼스 전환 팝업이 막혀서 20초로 낮췄다. */
-const EAT_KEY = 'sl_eat_pop_v2';
-const EAT_MAX = 2, EAT_GAP = 20 * 1000;
+   광고형: 입장 10초 뒤 첫 팝업, 그 뒤로는 1분마다 계속. 하루 횟수 제한도,
+   한 번 넘어갔다고 멈추는 것도 없다 (노출량을 KPI 상한이 아니라 변수로 두고 본다).
+   캠퍼스를 옮기면 10초 뒤에 그 캠퍼스용 문구로 띄우고 1분 시계를 다시 감는다. */
+const EAT_EVERY = 60 * 1000, EAT_FIRST = 10 * 1000;
 const eatPop = document.getElementById('eatpop');
-let eatLast = 0, eatTrigger = '';
+let eatTrigger = '', eatShown = 0, eatCycleT = null, eatFirstT = null;
 
-const eatToday = () => new Date().toDateString();
-function eatState() {
-  try {
-    const s = JSON.parse(localStorage.getItem(EAT_KEY) || '{}');
-    if (s.d === eatToday()) return s;
-  } catch (e) {}
-  return { d: eatToday(), n: 0, go: 0 };
-}
-function eatSave(s) { try { localStorage.setItem(EAT_KEY, JSON.stringify(s)); } catch (e) {} }
-
+/* 같은 문구가 반복되면 광고가 아니라 고장으로 보인다 → 돌아가며 보여준다 */
+const EAT_TIME_MSG = [
+  () => '경기 보다 보니 <b>배고파지지 않으셨나요?</b><br>' +
+        '메뉴 고민되면 저희가 대신 골라드릴게요.',
+  () => '아직 점심(저녁) 안 정하셨죠?<br>' +
+        '<b>버튼 한 번</b>이면 오늘 먹을 메뉴가 정해집니다.',
+  () => '오늘도 <b>“아무거나”</b> 하실 건가요?<br>' +
+        '3초면 메뉴가 정해집니다.'
+];
 const EAT_MSG = {
-  time: () => '경기 보다 보니 <b>배고파지지 않으셨나요?</b><br>' +
-              '메뉴 고민되면 저희가 대신 골라드릴게요.',
-  time2: () => '아직 점심(저녁) 안 정하셨죠?<br>' +
-               '<b>버튼 한 번</b>이면 오늘 먹을 메뉴가 정해집니다.',
+  time: () => EAT_TIME_MSG[eatShown % EAT_TIME_MSG.length](),
   campus: () => '<b>' + C().short + '</b>으로 넘어오셨네요!<br>' +
                 '그 근처에서 뭐 먹을지 고민이라면 — 메뉴 추천해 드릴게요.'
 };
 
 function showEat(trigger) {
-  const s = eatState();
-  if (s.go || s.n >= EAT_MAX) return;                 // 이미 넘어갔거나 오늘 할당량 끝
   if (eatPop.classList.contains('show')) return;      // 이미 떠 있으면 겹치지 않게
-  if (Date.now() - eatLast < EAT_GAP) return;         // 너무 붙어서 뜨지 않게
   eatTrigger = trigger;
-  eatLast = Date.now();
   document.getElementById('eatMsg').innerHTML = EAT_MSG[trigger]();
   eatPop.classList.add('show');
-  s.n++; s.d = eatToday(); eatSave(s);
-  gtag('event', 'eat_popup_show', { trigger: trigger, campus: CAMPUS, count: s.n });
+  eatShown++;
+  gtag('event', 'eat_popup_show', { trigger: trigger, campus: CAMPUS, count: eatShown });
 }
 function hideEat(how) {
   if (!eatPop.classList.contains('show')) return;
   eatPop.classList.remove('show');
   gtag('event', 'eat_popup_close', { trigger: eatTrigger, how: how });
+}
+/* 방금 띄웠으면 다음 1분은 그 시점부터 다시 센다 */
+function restartEatCycle() {
+  clearTimeout(eatFirstT);
+  clearInterval(eatCycleT);
+  eatCycleT = setInterval(() => showEat('time'), EAT_EVERY);
 }
 
 document.getElementById('eatNo').addEventListener('click', () => hideEat('button'));
@@ -1700,14 +1697,12 @@ document.getElementById('eatx').addEventListener('click', () => hideEat('x'));
 eatPop.addEventListener('click', e => { if (e.target === eatPop) hideEat('backdrop'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideEat('esc'); });
 document.getElementById('eatGo').addEventListener('click', () => {
-  const s = eatState(); s.go = 1; eatSave(s);         // 넘어간 사람에겐 오늘 더 안 띄운다
   gtag('event', 'eat_popup_go', { trigger: eatTrigger, campus: CAMPUS });
   gtag('event', 'outbound_click', { target: 'today-eat', from: 'popup' });
   eatPop.classList.remove('show');
 });
 
-setTimeout(() => showEat('time'), 10 * 1000);     // 들어오고 10초
-setTimeout(() => showEat('time2'), 180 * 1000);
+eatFirstT = setTimeout(() => { showEat('time'); restartEatCycle(); }, EAT_FIRST);
 
 /* ═══════════ 초기화 ═══════════ */
 setCampus(CAMPUS, false);
