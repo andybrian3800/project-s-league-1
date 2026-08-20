@@ -216,7 +216,7 @@
 
 ```
 GA(구글 애널리틱스) 지표 확인 좀 맡아줘. 초대 메일 갔을 테니까 링크 눌러서 한 번 들어와 줘.
-가이드: https://github.com/andybrian3800/project-s-league-1/blob/main/docs/GA-확인-가이드.md
+가이드: https://github.com/andybrian3800/project-s-league-1/blob/main/docs/ga-guide.md
 
 볼 건 딱 두 개야.
 - team_select = 팀 버튼 누른 수
