@@ -68,7 +68,7 @@
   .eatbtn {
     position: relative; overflow: hidden;
     display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
-    height: 40px; padding: 0 15px; border-radius: var(--r-m);
+    height: 46px; padding: 0 19px; border-radius: var(--r-m);
     background: var(--eat); color: #fff;
     border: 1px solid rgba(255,255,255,.22);
     box-shadow: 0 3px 14px rgba(244,99,44,.38);
@@ -76,9 +76,9 @@
   }
   .eatbtn:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(244,99,44,.5); }
   .eatbtn:active { transform: translateY(0); }
-  .eatbtn .ico { font-size: 18px; line-height: 1; }
-  .eatbtn .lbl { font-size: 14.5px; font-weight: 800; letter-spacing: -0.05em; white-space: nowrap; }
-  .eatbtn .arw { font-size: 12px; opacity: .8; font-weight: 800; }
+  .eatbtn .ico { font-size: 21px; line-height: 1; }
+  .eatbtn .lbl { font-size: 16.5px; font-weight: 800; letter-spacing: -0.05em; white-space: nowrap; }
+  .eatbtn .arw { font-size: 13.5px; opacity: .8; font-weight: 800; }
   /* 지나가는 광 — 버튼이 살아 있다는 신호 */
   .eatbtn::after {
     content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
@@ -87,8 +87,9 @@
   }
   @keyframes shine { 0%, 62% { left: -60%; } 88%, 100% { left: 120%; } }
   @media (max-width: 560px) {
-    .eatbtn { height: 38px; padding: 0 12px; gap: 6px; }
-    .eatbtn .lbl { font-size: 13.5px; }
+    .eatbtn { height: 42px; padding: 0 14px; gap: 7px; }
+    .eatbtn .ico { font-size: 19px; }
+    .eatbtn .lbl { font-size: 15px; }
     .eatbtn .arw { display: none; }
   }
 
@@ -1547,6 +1548,7 @@ document.getElementById('only').addEventListener('click', () => {
 document.getElementById('reset').addEventListener('click', clearTeam);
 
 /* ═══════════ 캠퍼스 전환 ═══════════ */
+let campusEatT;                                  // 캠퍼스를 연달아 바꾸면 마지막 것만 남긴다
 function setCampus(c, fire) {
   CAMPUS = c;
   localStorage.setItem('sl_campus', c);
@@ -1559,8 +1561,10 @@ function setCampus(c, fire) {
   // KPI: 어느 캠퍼스 사람들이 들어오는가 — 확장 가치 판단 근거
   if (fire) {
     gtag('event', 'campus_select', { campus: c });
-    // 캠퍼스를 옮기는 순간 = "그 동네에서 뭐 먹지"가 자연스러운 타이밍
-    setTimeout(() => showEat('campus'), 900);
+    // 캠퍼스를 옮기는 순간 = "그 동네에서 뭐 먹지"가 자연스러운 타이밍.
+    // 옮긴 화면을 10초쯤 둘러본 뒤에 띄운다.
+    clearTimeout(campusEatT);
+    campusEatT = setTimeout(() => showEat('campus'), 10 * 1000);
   }
 }
 document.querySelectorAll('.cam').forEach(b => {
@@ -1646,10 +1650,11 @@ document.getElementById('champ').addEventListener('click', function () {
 });
 
 /* ═══════════ 오늘 뭐먹지? 팝업 ═══════════
-   기준: 하루 최대 2번 · 팝업끼리 최소 90초 간격 · 한 번 눌러서 넘어간 날은 더 안 띄운다.
-   트리거 ① 40초 체류  ② 캠퍼스 전환  ③ 3분 체류(①·②로 2번을 못 채웠을 때) */
+   기준: 하루 최대 2번 · 팝업끼리 최소 20초 간격 · 한 번 눌러서 넘어간 날은 더 안 띄운다.
+   트리거 ① 입장 10초 후  ② 캠퍼스 전환 10초 후  ③ 3분 체류(①·②로 2번을 못 채웠을 때)
+   간격을 90초로 두면 입장 팝업 직후의 캠퍼스 전환 팝업이 막혀서 20초로 낮췄다. */
 const EAT_KEY = 'sl_eat_pop_v2';
-const EAT_MAX = 2, EAT_GAP = 90 * 1000;
+const EAT_MAX = 2, EAT_GAP = 20 * 1000;
 const eatPop = document.getElementById('eatpop');
 let eatLast = 0, eatTrigger = '';
 
@@ -1701,7 +1706,7 @@ document.getElementById('eatGo').addEventListener('click', () => {
   eatPop.classList.remove('show');
 });
 
-setTimeout(() => showEat('time'), 40 * 1000);
+setTimeout(() => showEat('time'), 10 * 1000);     // 들어오고 10초
 setTimeout(() => showEat('time2'), 180 * 1000);
 
 /* ═══════════ 초기화 ═══════════ */
